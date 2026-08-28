@@ -1,0 +1,44 @@
+/* =========================================================================
+   Soulstory · Typography
+   Two voices, one document. Mr Eaves (sans) carries strategic clarity;
+   Minion 3 (serif italic) carries soulful editorial weight. Never substitute.
+   ========================================================================= */
+
+:root {
+  /* ---- Families ---- */
+  --font-sans:  'mr-eaves-sans', 'Mr Eaves Sans OT', 'Avenir Next', 'Avenir', 'Helvetica Neue', system-ui, Arial, sans-serif;
+  --font-serif: 'minion-3', 'Minion 3 Pro', 'Minion Pro', Garamond, Georgia, serif;
+  --font-mono:  'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* ---- Tracking ---- */
+  --tracking-tight:  -0.02em;
+  --tracking-normal: 0em;
+  --tracking-wide:   0.06em;
+  --tracking-wider:  0.12em;
+}
+
+/* ---------- Type utility classes (the canonical hierarchy) ---------- */
+.t-display-hero  { font-family: var(--font-sans); font-size: 72px; font-weight: 400; line-height: 1.05; letter-spacing: -1.8px; }
+.t-display-large { font-family: var(--font-sans); font-size: 56px; font-weight: 400; line-height: 1.08; letter-spacing: -1.4px; }
+.t-display       { font-family: var(--font-sans); font-size: 44px; font-weight: 500; line-height: 1.12; letter-spacing: -1.0px; }
+.t-h1            { font-family: var(--font-sans); font-size: 36px; font-weight: 500; line-height: 1.18; letter-spacing: -0.6px; }
+.t-h2            { font-family: var(--font-sans); font-size: 28px; font-weight: 500; line-height: 1.25; letter-spacing: -0.4px; }
+.t-h3            { font-family: var(--font-sans); font-size: 22px; font-weight: 500; line-height: 1.30; letter-spacing: -0.2px; }
+.t-h4            { font-family: var(--font-sans); font-size: 18px; font-weight: 500; line-height: 1.35; }
+
+.t-tagline         { font-family: var(--font-serif); font-style: italic; font-size: 14px; font-weight: 400; line-height: 1.45; letter-spacing: 0.2px; }
+.t-attribution     { font-family: var(--font-serif); font-style: italic; font-size: 14px; font-weight: 400; line-height: 1.45; }
+.t-pull-quote      { font-family: var(--font-serif); font-size: 28px; font-weight: 400; line-height: 1.30; }
+.t-pull-quote-sans { font-family: var(--font-sans); font-size: 32px; font-weight: 400; line-height: 1.20; letter-spacing: -0.4px; }
+.t-editorial       { font-family: var(--font-serif); font-size: 17px; font-weight: 400; line-height: 1.70; }
+
+.t-body-large    { font-family: var(--font-sans); font-size: 18px; font-weight: 400; line-height: 1.65; }
+.t-body          { font-family: var(--font-sans); font-size: 16px; font-weight: 400; line-height: 1.60; }
+.t-body-medium   { font-family: var(--font-sans); font-size: 16px; font-weight: 500; line-height: 1.50; }
+.t-body-small    { font-family: var(--font-sans); font-size: 15px; font-weight: 400; line-height: 1.55; }
+
+.t-caption       { font-family: var(--font-sans); font-size: 14px; font-weight: 400; line-height: 1.50; }
+.t-label         { font-family: var(--font-sans); font-size: 13px; font-weight: 500; line-height: 1.40; letter-spacing: 0.1px; }
+.t-button        { font-family: var(--font-sans); font-size: 15px; font-weight: 500; line-height: 1.00; }
+.t-overline      { font-family: var(--font-sans); font-size: 11px; font-weight: 500; line-height: 1.40; letter-spacing: 0.6px; text-transform: uppercase; }
+.t-micro         { font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 1.40; letter-spacing: 0.1px; }

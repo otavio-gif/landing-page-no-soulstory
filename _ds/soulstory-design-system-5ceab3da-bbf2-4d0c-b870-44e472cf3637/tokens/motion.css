@@ -1,0 +1,24 @@
+/* =========================================================================
+   Soulstory · Motion
+   Calm, intentional. Fades and gentle lifts — never bounce.
+   ========================================================================= */
+
+:root {
+  --dur-fast: 160ms;  /* @kind other */
+  --dur-base: 280ms;  /* @kind other */
+  --dur-slow: 520ms;  /* @kind other */
+  --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);  /* @kind other */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);  /* @kind other */
+}
+
+/* ---------- A11y · reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

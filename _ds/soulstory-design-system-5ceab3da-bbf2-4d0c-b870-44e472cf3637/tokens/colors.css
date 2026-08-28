@@ -1,0 +1,60 @@
+/* =========================================================================
+   Soulstory · Color
+   An indigo–violet axis, warmed by parchment. Parchment ↔ Void.
+   No warm chromatics. Saturation restrained. Quiet authority, never flash.
+   ========================================================================= */
+
+:root {
+  /* ---- Brand ---- */
+  --ss-indigo:         #3D396E;   /* Indigo Authority — primary */
+  --ss-periwinkle:     #8E9FEE;   /* Lavender Insight */
+  --ss-sky:            #8CC6FF;   /* Sky Awakening */
+  --ss-indigo-press:   #2D2A52;   /* pressed / deepest brand */
+
+  /* ---- Surfaces · Light ---- */
+  --ss-cream:          #FAF8F5;   /* Parchment Canvas — default page bg */
+  --ss-warm-veil:      #F1EFEC;   /* Warm Veil — alt section bg */
+  --ss-white:          #FFFFFF;   /* card fill only, never page bg */
+  --ss-lavender:       #E1E4F6;   /* Mist Lavender — badge / tint fill */
+
+  /* ---- Surfaces · Dark ---- */
+  --ss-ink:            #0C0B14;   /* Deep Indigo Void — dark page bg */
+  --ss-elevated:       #15131F;   /* Elevated Void */
+  --ss-surface-indigo: #1F1B2E;   /* Surface Indigo */
+
+  /* ---- Text · on light ---- */
+  --text-primary:      #0C0B14;
+  --text-body:         rgba(12, 11, 20, 0.78);
+  --text-secondary:    rgba(12, 11, 20, 0.62);
+  --text-tertiary:     rgba(12, 11, 20, 0.58);  /* meets WCAG AA */
+  --text-muted:        rgba(12, 11, 20, 0.32);  /* decoration / non-text only */
+
+  /* ---- Text · on dark ---- */
+  --text-primary-dark:   #FAF8F5;
+  --text-body-dark:      rgba(250, 248, 245, 0.82);
+  --text-secondary-dark: rgba(250, 248, 245, 0.66);
+  --text-tertiary-dark:  rgba(250, 248, 245, 0.60);  /* meets WCAG AA */
+  --text-muted-dark:     rgba(250, 248, 245, 0.32);  /* decoration only */
+
+  /* ---- Borders ---- */
+  --line-whisper:      rgba(60, 57, 110, 0.10);
+  --line-default:      rgba(60, 57, 110, 0.18);
+  --line-whisper-dark: rgba(225, 228, 246, 0.08);
+  --line-default-dark: rgba(225, 228, 246, 0.14);
+  --line-active:       #8E9FEE;
+
+  /* ---- Status (desaturated, brand-aligned) ---- */
+  --status-success: #5C8B7A;
+  --status-error:   #9B4444;
+  --status-warning: #9B7C44;
+  --status-info:    #8CC6FF;
+
+  /* ---- Semantic aliases ---- */
+  --surface-page:    var(--ss-cream);
+  --surface-veil:    var(--ss-warm-veil);
+  --surface-card:    var(--ss-white);
+  --surface-void:    var(--ss-ink);
+  --brand:           var(--ss-indigo);
+  --brand-soft:      var(--ss-periwinkle);
+  --accent-sky:      var(--ss-sky);
+}

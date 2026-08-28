@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/typography.css">
+</helmet>
+<a href="{{ href }}" ref="{{ rootRef }}" onMouseEnter="{{ on }}" onMouseMove="{{ move }}" onMouseLeave="{{ off }}" aria-label="{{ ariaLabel }}" onClick="{{ open }}" style="display:inline-block; text-decoration:none; border-radius:{{ br }}px; cursor:pointer; box-shadow:{{ shadow }}; transition:box-shadow .18s ease-out, transform .14s ease-out; will-change:transform">
+  <x-import component="BorderGlow" from="./BorderGlow.jsx" background-color="#E9BE58" glow-color="{{ glowHsl }}" glow-intensity="{{ glow }}" edge-sensitivity="0" glow-radius="{{ radius }}" fill-opacity="1" cone-spread="{{ cone }}" border-radius="{{ br }}" colors="{{ goldColors }}" animated="{{ true }}" hint-size="auto,72px">
+    <div style="padding:{{ pad }}; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; text-align:center; line-height:1.02; white-space:nowrap">
+      <span style="font-family:var(--font-sans); font-weight:500; font-size:{{ f1 }}; letter-spacing:0.01em; color:#4A3B0C">{{ line1 }}</span>
+      <span style="font-family:var(--font-sans); font-weight:700; font-size:{{ f2 }}; letter-spacing:-0.4px; color:#0C0B14">{{ line2 }}</span>
+    </div>
+  </x-import>
+</a>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 300, &quot;height&quot;: 110 },
+  &quot;compact&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot; },
+  &quot;opens&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot; },
+  &quot;line1&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Agendar um&quot;, &quot;tsType&quot;: &quot;string&quot; },
+  &quot;line2&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;Raio-X Gratuito&quot;, &quot;tsType&quot;: &quot;string&quot; },
+  &quot;href&quot;: { &quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;#investimento&quot;, &quot;tsType&quot;: &quot;string&quot; }
+}">
+class Component extends DCLogic {
+  state = { hot: false };
+  renderVals() {
+    const compact = this.props.compact ?? false;
+    const hot = this.state.hot;
+    const rest = '0 0 0 1px rgba(233,190,88,0.5), 0 6px 22px -8px rgba(233,190,88,0.5), 0 0 40px rgba(233,190,88,0.26)';
+    return {
+      rootRef: (el) => { this._el = el; },
+      on: () => this.setState({ hot: true }),
+      off: () => {
+        if (this._el) { this._el.style.transform = ''; this._el.style.boxShadow = ''; }
+        this.setState({ hot: false });
+      },
+      move: (e) => {
+        const el = this._el;
+        if (!el) return;
+        const r = el.getBoundingClientRect();
+        const x = Math.min(Math.max((e.clientX - r.left) / r.width, 0), 1);
+        const y = Math.min(Math.max((e.clientY - r.top) / r.height, 0), 1);
+        const dx = x - 0.5, dy = y - 0.5;
+        el.style.transform = 'perspective(680px) translateY(-4px) scale(1.03) rotateX(' + (-dy * 12).toFixed(2) + 'deg) rotateY(' + (dx * 14).toFixed(2) + 'deg)';
+        const ox = (dx * 34).toFixed(0), oy = (dy * 34).toFixed(0);
+        el.style.boxShadow =
+          '0 0 0 1px rgba(233,190,88,0.95),' +
+          ox + 'px ' + oy + 'px 30px rgba(233,190,88,0.95),' +
+          (dx * 66).toFixed(0) + 'px ' + (dy * 66).toFixed(0) + 'px 90px rgba(233,190,88,0.55),' +
+          '0 20px 48px -20px rgba(74,59,12,0.5)';
+      },
+      br: compact ? 13 : 18,
+      glow: hot ? 4.6 : 2.2,
+      radius: hot ? 66 : 38,
+      cone: hot ? 14 : 46,
+      glowHsl: '44 82 62',
+      goldColors: ['#F6E1A0', '#E9BE58', '#FAF8F5'],
+      pad: compact ? '9px 22px' : '17px 44px',
+      f1: compact ? '12px' : 'clamp(17px, 1.35vw, 23px)',
+      f2: compact ? '16px' : 'clamp(23px, 2vw, 33px)',
+      line1: this.props.line1 ?? 'Agendar um',
+      line2: this.props.line2 ?? 'Raio-X Gratuito',
+      href: this.props.href ?? '#investimento',
+      open: (e) => { if (this.props.opens) { if (e && e.preventDefault) e.preventDefault(); try { window.dispatchEvent(new CustomEvent('soulstory:open-raiox')); } catch (_) {} } },
+      ariaLabel: (this.props.line1 ?? 'Agendar um') + ' ' + (this.props.line2 ?? 'Raio-X Gratuito'),
+      shadow: rest,
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+/* =========================================================================
+   Soulstory · Fonts
+   Mr Eaves Sans OT + Minion 3 Pro via Adobe Typekit · JetBrains Mono (Google)
+   ========================================================================= */
+
+/* Adobe Fonts kit: mr-eaves-sans, mr-eaves-modern, minion-3 (400/700 + italics).
+   NOTE: the live kit ships 400 + 700 only; requests for w500 fall back to 400.
+   Add Medium (n5) in Adobe Fonts → Web Projects → wnf4ddz to recover weight 500. */
+@import url('https://use.typekit.net/wnf4ddz.css');
+
+/* Mono — JetBrains Mono */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
