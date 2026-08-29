@@ -50,3 +50,54 @@
   transform: translate(-50%, -50%);
   /* só amplia a área de toque, não aparece na tela */
 }
+
+/* ---------- 3. Borda elétrica: estática no celular ----------
+   No desktop o contorno do card do Raio-X é desenhado quadro a quadro num canvas,
+   deslocado por ruído, e cercado por três camadas de brilho borrado. É bonito e
+   custa caro: cerca de 30 mil contas por quadro, 60 vezes por segundo, num
+   aparelho que já tem menos fôlego e bateria contada.
+
+   No celular a mesma ideia vira uma hairline periwinkle parada. Some o canvas,
+   somem os dois brilhos borrados e some o eb-background-glow, que era o único
+   gradiente que ainda restava nesta página. No lugar entra um anel de 1px em
+   var(--brand-soft), desenhado como sombra no contêiner para não disputar com a
+   borda que o card já traz no atributo style (estilo inline só perde para
+   !important, e não vale sujar o CSS por causa disso).
+
+   O limite de 700px é o mesmo que o hero já usa para trocar a imagem de fundo,
+   então "celular" quer dizer a mesma coisa nos dois lugares.
+
+   O borda-eletrica.js tem a trava correspondente: abaixo de 700px ele nem liga a
+   animação, senão o processador continuaria desenhando um canvas escondido. */
+@media (max-width: 700px) {
+  .electric-border .eb-canvas-container,
+  .electric-border .eb-layers {
+    display: none;
+  }
+
+  .electric-border {
+    box-shadow: 0 0 0 1px var(--brand-soft);
+  }
+}
+
+/* ---------- 4. Meio-tom: fora do celular ----------
+   A arte da citação é um shader WebGL que revela a frase debaixo do cursor. No
+   celular não existe cursor: a arte ficava parada em meio-tom, com a frase
+   serrilhada e ilegível, depois de baixar 130KB da biblioteca OGL só para isso.
+   Medido na arte exibida com os 343px de largura que o celular tem: a overline
+   caía para 3,4px de altura e a assinatura para 6,5px.
+
+   Então no celular a arte sai inteira, e com ela as duas linhas que só existiam
+   para pedir o gesto (o convite "passe o cursor" e a instrução embaixo). A
+   seção fica com a overline e o título, que é o que sustenta a ideia sem
+   depender de interação. O desktop segue exatamente como estava.
+
+   O meio-tom.js tem a trava correspondente: abaixo de 700px ele não busca a OGL
+   nem monta o WebGL. */
+@media (max-width: 700px) {
+  [data-meio-tom-caixa],
+  [data-meio-tom-convite],
+  [data-meio-tom-instrucao] {
+    display: none;
+  }
+}

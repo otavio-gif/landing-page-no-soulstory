@@ -30,6 +30,14 @@
   var movimentoReduzido = false;
   try { movimentoReduzido = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
 
+  // No celular a borda é uma hairline parada, desenhada pelo responsivo.css, e o
+  // canvas fica escondido. Sem esta trava o aparelho continuaria fazendo 30 mil
+  // contas de ruído por quadro para desenhar algo que ninguém vê. O limite de
+  // 700px é o mesmo do CSS: se mudar lá, muda aqui.
+  var celular = null;
+  try { celular = window.matchMedia('(max-width: 700px)'); } catch (e) {}
+  function noCelular() { return !!(celular && celular.matches); }
+
   // ---------- Ruído (mesma matemática do original) ----------
   function aleatorio(x) { return (Math.sin(x * 12.9898) * 43758.5453) % 1; }
 
@@ -110,11 +118,12 @@
   // carregamento, mesmo com o card três telas abaixo. Como cada quadro faz
   // cerca de 30 mil contas de ruído, era processador gasto para desenhar o
   // que ninguém estava vendo.
-  var naTela = false;
+  var naTela = false;   // está animando agora
+  var visivel = false;  // o card está dentro da área visível
   var quadro = null;
 
   function ligar() {
-    if (naTela || movimentoReduzido) return;
+    if (naTela || movimentoReduzido || noCelular()) return;
     naTela = true;
     ultimoQuadro = performance.now(); // evita um salto grande no primeiro quadro
     quadro = requestAnimationFrame(desenhar);
@@ -182,12 +191,25 @@
   if (window.ResizeObserver) new ResizeObserver(ajustarTamanho).observe(container);
   ultimoQuadro = performance.now();
 
+  // Girar o aparelho ou redimensionar a janela cruza os 700px: a animação
+  // acompanha a troca de borda que o CSS acabou de fazer. O observador de tela
+  // continua sendo criado em qualquer largura, senão uma janela que começa
+  // estreita e depois alarga ficaria sem ninguém para ligar a animação.
+  if (celular && celular.addEventListener) {
+    celular.addEventListener('change', function () {
+      if (celular.matches) desligar();
+      else if (movimentoReduzido) requestAnimationFrame(desenhar);
+      else if (visivel) ligar();
+    });
+  }
+
   if (movimentoReduzido) {
     // movimento reduzido: um quadro só, parado, como já era
-    requestAnimationFrame(desenhar);
+    if (!noCelular()) requestAnimationFrame(desenhar);
   } else if (window.IntersectionObserver) {
+    // ligar() ignora o pedido enquanto a tela for de celular
     new IntersectionObserver(function (entradas) {
-      entradas.forEach(function (e) { if (e.isIntersecting) ligar(); else desligar(); });
+      entradas.forEach(function (e) { visivel = e.isIntersecting; if (visivel) ligar(); else desligar(); });
     }, { rootMargin: '200px' }).observe(container);
   } else {
     ligar(); // navegador sem observador: mantém o comportamento antigo

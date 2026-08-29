@@ -291,16 +291,42 @@ void main() {
     buscarOgl().then(function () { iniciar(); }, function () { /* fica a reserva */ });
   }
 
-  if (window.IntersectionObserver) {
-    var obs = new IntersectionObserver(function (entradas) {
-      entradas.forEach(function (e) {
-        if (!e.isIntersecting) return;
-        obs.disconnect();
-        acionar();
+  // ---------- Fora do celular ----------
+  // Abaixo de 700px a arte inteira sai da página pelo responsivo.css, porque sem
+  // cursor não há o que revelar. A trava aqui garante que a OGL, 130KB que
+  // servem só a este efeito, nunca seja buscada nesses aparelhos. O limite é o
+  // mesmo do CSS: se mudar lá, muda aqui.
+  var celular = null;
+  try { celular = window.matchMedia('(max-width: 700px)'); } catch (e) {}
+  function noCelular() { return !!(celular && celular.matches); }
+
+  function observar() {
+    if (window.IntersectionObserver) {
+      var obs = new IntersectionObserver(function (entradas) {
+        entradas.forEach(function (e) {
+          if (!e.isIntersecting || noCelular()) return;
+          obs.disconnect();
+          acionar();
+        });
+      }, { rootMargin: '600px' });
+      obs.observe(caixa);
+    } else {
+      acionar();
+    }
+  }
+
+  if (noCelular()) {
+    // Janela estreita pode virar larga (girar o aparelho, redimensionar no
+    // computador). Quando isso acontece a arte volta a existir, e só então
+    // vale a pena começar a observá-la.
+    if (celular && celular.addEventListener) {
+      celular.addEventListener('change', function ao(e) {
+        if (e.matches) return;
+        celular.removeEventListener('change', ao);
+        observar();
       });
-    }, { rootMargin: '600px' });
-    obs.observe(caixa);
+    }
   } else {
-    acionar();
+    observar();
   }
 })();
