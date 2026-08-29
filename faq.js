@@ -74,21 +74,42 @@
     }).join('');
   }
 
+  // Os botões são abas de verdade: têm role="tab" no HTML, e aqui mantemos os
+  // estados que o leitor de tela lê. Só a aba ativa fica na sequência do Tab;
+  // entre as abas se anda pelas setas, como manda o padrão.
   function renderizarAbas() {
     abas.forEach(function (btn, i) {
       var ativa = i === abaAtiva;
       btn.style.borderBottom = '2px solid ' + (ativa ? '#8E9FEE' : 'transparent');
       btn.style.color = ativa ? '#8E9FEE' : 'rgba(250,248,245,0.55)';
       btn.setAttribute('aria-selected', ativa ? 'true' : 'false');
+      btn.setAttribute('tabindex', ativa ? '0' : '-1');
     });
+    // o painel passa a ser rotulado pela aba que está aberta
+    if (abas[abaAtiva] && abas[abaAtiva].id) {
+      lista.setAttribute('aria-labelledby', abas[abaAtiva].id);
+    }
+  }
+
+  function trocarPara(i, moverFoco) {
+    abaAtiva = i;
+    aberta = null; // trocar de aba fecha tudo, como no original
+    renderizarAbas();
+    renderizarLista();
+    if (moverFoco && abas[i]) abas[i].focus();
   }
 
   abas.forEach(function (btn, i) {
-    btn.addEventListener('click', function () {
-      abaAtiva = i;
-      aberta = null; // trocar de aba fecha tudo, como no original
-      renderizarAbas();
-      renderizarLista();
+    btn.addEventListener('click', function () { trocarPara(i, false); });
+    btn.addEventListener('keydown', function (e) {
+      var destino = null;
+      if (e.key === 'ArrowRight') destino = (i + 1) % abas.length;
+      else if (e.key === 'ArrowLeft') destino = (i - 1 + abas.length) % abas.length;
+      else if (e.key === 'Home') destino = 0;
+      else if (e.key === 'End') destino = abas.length - 1;
+      if (destino === null) return;
+      e.preventDefault();
+      trocarPara(destino, true);
     });
   });
 

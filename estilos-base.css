@@ -1,0 +1,297 @@
+@import url('https://use.typekit.net/wnf4ddz.css');
+/* =========================================================================
+   Soulstory · fontes, tokens e design system
+   ARQUIVO GERADO. Não edite aqui: mexa nos arquivos de origem e rode
+   python3 construir-estilos.py para refazer.
+   Origem:
+     vendor/fontes/jetbrains-mono.css
+     _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/fonts.css
+     _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/colors.css
+     _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/typography.css
+     _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/spacing.css
+     _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/motion.css
+     _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/base.css
+     _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/styles.css
+   ========================================================================= */
+
+/* ===== vendor/fontes/jetbrains-mono.css ===== */
+/* =========================================================================
+   JetBrains Mono servido do próprio site.
+   Fonte livre, licença SIL Open Font License 1.1, que permite hospedar.
+
+   Só os subconjuntos latinos, que é o que este site em português usa.
+   É uma fonte variável: o mesmo arquivo atende os pesos 400 e 500, por isso
+   cada subconjunto tem um arquivo só e a declaração traz a faixa de peso.
+
+   Trazer a fonte para casa tira o último pedido a servidores do Google, o que
+   também evita mandar o IP de quem visita para fora sem necessidade.
+   ========================================================================= */
+
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url(vendor/fontes/jetbrains-mono-latin-ext-400.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url(vendor/fontes/jetbrains-mono-latin-400.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ===== _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/fonts.css ===== */
+/* =========================================================================
+   Soulstory · Fonts
+   Mr Eaves Sans OT + Minion 3 Pro via Adobe Typekit · JetBrains Mono (Google)
+   ========================================================================= */
+
+/* Adobe Fonts kit: mr-eaves-sans, mr-eaves-modern, minion-3 (400/700 + italics).
+   NOTE: the live kit ships 400 + 700 only; requests for w500 fall back to 400.
+   Add Medium (n5) in Adobe Fonts → Web Projects → wnf4ddz to recover weight 500. */
+
+
+/* Mono: JetBrains Mono.
+   O carregamento saiu do Google Fonts e passou a ser local, em
+   vendor/fontes/jetbrains-mono.css, ligado direto no HTML da página.
+   A fonte é livre (SIL Open Font License 1.1), então hospedar é permitido, e
+   assim o site para de pedir arquivo a servidor de terceiro.
+   O kit da Adobe acima continua como está, por ser serviço licenciado. */
+
+/* ===== _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/colors.css ===== */
+/* =========================================================================
+   Soulstory · Color
+   An indigo–violet axis, warmed by parchment. Parchment ↔ Void.
+   No warm chromatics. Saturation restrained. Quiet authority, never flash.
+   ========================================================================= */
+
+:root {
+  /* ---- Brand ---- */
+  --ss-indigo:         #3D396E;   /* Indigo Authority — primary */
+  --ss-periwinkle:     #8E9FEE;   /* Lavender Insight */
+  --ss-sky:            #8CC6FF;   /* Sky Awakening */
+  --ss-indigo-press:   #2D2A52;   /* pressed / deepest brand */
+
+  /* ---- Surfaces · Light ---- */
+  --ss-cream:          #FAF8F5;   /* Parchment Canvas — default page bg */
+  --ss-warm-veil:      #F1EFEC;   /* Warm Veil — alt section bg */
+  --ss-white:          #FFFFFF;   /* card fill only, never page bg */
+  --ss-lavender:       #E1E4F6;   /* Mist Lavender — badge / tint fill */
+
+  /* ---- Surfaces · Dark ---- */
+  --ss-ink:            #0C0B14;   /* Deep Indigo Void — dark page bg */
+  --ss-elevated:       #15131F;   /* Elevated Void */
+  --ss-surface-indigo: #1F1B2E;   /* Surface Indigo */
+
+  /* ---- Text · on light ---- */
+  --text-primary:      #0C0B14;
+  --text-body:         rgba(12, 11, 20, 0.78);
+  --text-secondary:    rgba(12, 11, 20, 0.62);
+  --text-tertiary:     rgba(12, 11, 20, 0.58);  /* meets WCAG AA */
+  --text-muted:        rgba(12, 11, 20, 0.32);  /* decoration / non-text only */
+
+  /* ---- Text · on dark ---- */
+  --text-primary-dark:   #FAF8F5;
+  --text-body-dark:      rgba(250, 248, 245, 0.82);
+  --text-secondary-dark: rgba(250, 248, 245, 0.66);
+  --text-tertiary-dark:  rgba(250, 248, 245, 0.60);  /* meets WCAG AA */
+  --text-muted-dark:     rgba(250, 248, 245, 0.32);  /* decoration only */
+
+  /* ---- Borders ---- */
+  --line-whisper:      rgba(60, 57, 110, 0.10);
+  --line-default:      rgba(60, 57, 110, 0.18);
+  --line-whisper-dark: rgba(225, 228, 246, 0.08);
+  --line-default-dark: rgba(225, 228, 246, 0.14);
+  --line-active:       #8E9FEE;
+
+  /* ---- Status (desaturated, brand-aligned) ---- */
+  --status-success: #5C8B7A;
+  --status-error:   #9B4444;
+  --status-warning: #9B7C44;
+  --status-info:    #8CC6FF;
+
+  /* ---- Semantic aliases ---- */
+  --surface-page:    var(--ss-cream);
+  --surface-veil:    var(--ss-warm-veil);
+  --surface-card:    var(--ss-white);
+  --surface-void:    var(--ss-ink);
+  --brand:           var(--ss-indigo);
+  --brand-soft:      var(--ss-periwinkle);
+  --accent-sky:      var(--ss-sky);
+}
+
+/* ===== _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/typography.css ===== */
+/* =========================================================================
+   Soulstory · Typography
+   Two voices, one document. Mr Eaves (sans) carries strategic clarity;
+   Minion 3 (serif italic) carries soulful editorial weight. Never substitute.
+   ========================================================================= */
+
+:root {
+  /* ---- Families ---- */
+  --font-sans:  'mr-eaves-sans', 'Mr Eaves Sans OT', 'Avenir Next', 'Avenir', 'Helvetica Neue', system-ui, Arial, sans-serif;
+  --font-serif: 'minion-3', 'Minion 3 Pro', 'Minion Pro', Garamond, Georgia, serif;
+  --font-mono:  'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* ---- Tracking ---- */
+  --tracking-tight:  -0.02em;
+  --tracking-normal: 0em;
+  --tracking-wide:   0.06em;
+  --tracking-wider:  0.12em;
+}
+
+/* ---------- Type utility classes (the canonical hierarchy) ---------- */
+.t-display-hero  { font-family: var(--font-sans); font-size: 72px; font-weight: 400; line-height: 1.05; letter-spacing: -1.8px; }
+.t-display-large { font-family: var(--font-sans); font-size: 56px; font-weight: 400; line-height: 1.08; letter-spacing: -1.4px; }
+.t-display       { font-family: var(--font-sans); font-size: 44px; font-weight: 500; line-height: 1.12; letter-spacing: -1.0px; }
+.t-h1            { font-family: var(--font-sans); font-size: 36px; font-weight: 500; line-height: 1.18; letter-spacing: -0.6px; }
+.t-h2            { font-family: var(--font-sans); font-size: 28px; font-weight: 500; line-height: 1.25; letter-spacing: -0.4px; }
+.t-h3            { font-family: var(--font-sans); font-size: 22px; font-weight: 500; line-height: 1.30; letter-spacing: -0.2px; }
+.t-h4            { font-family: var(--font-sans); font-size: 18px; font-weight: 500; line-height: 1.35; }
+
+.t-tagline         { font-family: var(--font-serif); font-style: italic; font-size: 14px; font-weight: 400; line-height: 1.45; letter-spacing: 0.2px; }
+.t-attribution     { font-family: var(--font-serif); font-style: italic; font-size: 14px; font-weight: 400; line-height: 1.45; }
+.t-pull-quote      { font-family: var(--font-serif); font-size: 28px; font-weight: 400; line-height: 1.30; }
+.t-pull-quote-sans { font-family: var(--font-sans); font-size: 32px; font-weight: 400; line-height: 1.20; letter-spacing: -0.4px; }
+.t-editorial       { font-family: var(--font-serif); font-size: 17px; font-weight: 400; line-height: 1.70; }
+
+.t-body-large    { font-family: var(--font-sans); font-size: 18px; font-weight: 400; line-height: 1.65; }
+.t-body          { font-family: var(--font-sans); font-size: 16px; font-weight: 400; line-height: 1.60; }
+.t-body-medium   { font-family: var(--font-sans); font-size: 16px; font-weight: 500; line-height: 1.50; }
+.t-body-small    { font-family: var(--font-sans); font-size: 15px; font-weight: 400; line-height: 1.55; }
+
+.t-caption       { font-family: var(--font-sans); font-size: 14px; font-weight: 400; line-height: 1.50; }
+.t-label         { font-family: var(--font-sans); font-size: 13px; font-weight: 500; line-height: 1.40; letter-spacing: 0.1px; }
+.t-button        { font-family: var(--font-sans); font-size: 15px; font-weight: 500; line-height: 1.00; }
+.t-overline      { font-family: var(--font-sans); font-size: 11px; font-weight: 500; line-height: 1.40; letter-spacing: 0.6px; text-transform: uppercase; }
+.t-micro         { font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 1.40; letter-spacing: 0.1px; }
+
+/* ===== _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/spacing.css ===== */
+/* =========================================================================
+   Soulstory · Spacing, Radius & Elevation
+   8px base scale · almost-square corners (stops at 32px) · indigo-tinted shadows
+   ========================================================================= */
+
+:root {
+  /* ---- Spacing (8px base) ---- */
+  --sp-1:  4px;
+  --sp-2:  8px;
+  --sp-3:  12px;
+  --sp-4:  16px;
+  --sp-5:  20px;
+  --sp-6:  24px;
+  --sp-7:  32px;
+  --sp-8:  40px;
+  --sp-9:  48px;
+  --sp-10: 64px;
+  --sp-11: 80px;
+  --sp-12: 96px;
+  --sp-13: 128px;
+  --sp-14: 160px;
+
+  /* ---- Radius (almost-square — scale stops at 32px) ---- */
+  --r-xs:    4px;   /* sharp */
+  --r-sm:    6px;   /* subtle — badges */
+  --r-md:    10px;  /* buttons, inputs */
+  --r-lg:    12px;  /* cards */
+  --r-xl:    16px;  /* featured cards */
+  --r-2xl:   20px;
+  --r-3xl:   24px;
+  --r-4xl:   32px;  /* heroes — top of scale */
+
+  /* ---- Elevation · indigo-tinted (never neutral gray) ---- */
+  --shadow-1: 0 1px 2px rgba(60, 57, 110, 0.06);
+  --shadow-2: 0 4px 12px rgba(60, 57, 110, 0.08), 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-3: 0 16px 32px rgba(60, 57, 110, 0.10), 0 4px 8px rgba(0,0,0,0.04);
+  --shadow-soft-indigo:
+    rgba(60, 57, 110, 0.04) 0px 4px 18px,
+    rgba(60, 57, 110, 0.027) 0px 2px 7.85px,
+    rgba(60, 57, 110, 0.02) 0px 0.8px 2.93px;
+  --shadow-elevated:
+    rgba(60, 57, 110, 0.08) 0px 14px 28px,
+    rgba(60, 57, 110, 0.05) 0px 23px 52px,
+    rgba(0, 0, 0, 0.04) 0px 7px 15px;
+  --shadow-floating:
+    rgba(60, 57, 110, 0.16) 0px 30px 60px -12px,
+    rgba(60, 57, 110, 0.10) 0px 18px 36px -18px,
+    rgba(0, 0, 0, 0.04) 0px 8px 17px;
+  --shadow-ring-hover: 0 0 0 1px rgba(60, 57, 110, 0.18);
+  --shadow-ring-focus: 0 0 0 3px rgba(142, 159, 238, 0.20);
+
+  /* ---- Layout ---- */
+  --container-max: 1200px;
+}
+
+/* ===== _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/motion.css ===== */
+/* =========================================================================
+   Soulstory · Motion
+   Calm, intentional. Fades and gentle lifts — never bounce.
+   ========================================================================= */
+
+:root {
+  --dur-fast: 160ms;  /* @kind other */
+  --dur-base: 280ms;  /* @kind other */
+  --dur-slow: 520ms;  /* @kind other */
+  --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);  /* @kind other */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);  /* @kind other */
+}
+
+/* ---------- A11y · reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ===== _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/base.css ===== */
+/* =========================================================================
+   Soulstory · Base
+   Native-feeling element resets. Parchment canvas, humanist sans, AA focus.
+   ========================================================================= */
+
+html, body {
+  background: var(--ss-cream);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---------- A11y · keyboard focus ring (brand periwinkle) ---------- */
+:focus { outline: none; }
+.btn:focus-visible,
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+summary:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-ring-focus);
+  border-radius: var(--r-sm);
+}
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  border-color: var(--line-active);
+  box-shadow: var(--shadow-ring-focus);
+}
+
+/* ===== _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/styles.css ===== */
+/* =========================================================================
+   Soulstory Design System 2.0 — global entry point
+   Editorial-mystical brand system · Parchment ↔ Void
+   Consumers link THIS file only. Imports below reach every token + font-face.
+   ========================================================================= */

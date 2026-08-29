@@ -1,0 +1,125 @@
+/* =========================================================================
+   Soulstory · ajustes de estado e responsividade
+   ARQUIVO GERADO. Não edite aqui: mexa nos arquivos de origem e rode
+   python3 construir-estilos.py para refazer.
+   Origem:
+     estados.css
+     responsivo.css
+   ========================================================================= */
+
+/* ===== estados.css ===== */
+/* =========================================================================
+   Soulstory · estados de hover e de foco
+   O runtime de origem aplicava esses estados por conta própria (atributos
+   style-hover e style-focus) e os perdemos ao tornar a página independente.
+   Aqui eles voltam como CSS de verdade.
+
+   As regras usam !important porque o export deixou todos os estilos embutidos
+   no atributo style de cada elemento, e estilo embutido vence folha de estilo.
+   Os valores vêm dos tokens do design system, nunca de hex solto.
+   ========================================================================= */
+
+/* ---------- Hover (só onde existe ponteiro de verdade) ---------- */
+@media (hover: hover) {
+
+  /* Aba TRAMA, no topo da página */
+  a[href="#trama"]:hover {
+    box-shadow: var(--shadow-elevated) !important;
+    border-color: var(--line-active) !important;
+  }
+
+  /* Pílula "clique aqui e descubra", nos cards Motivo 1 e Motivo 2 */
+  .scp1:hover {
+    background: var(--ss-indigo-press) !important;
+  }
+
+  /* Botões de anterior e próximo do deck de depoimentos */
+  .scp4:hover {
+    background: color-mix(in srgb, var(--ss-periwinkle) 18%, transparent) !important;
+    border-color: color-mix(in srgb, var(--ss-periwinkle) 85%, transparent) !important;
+    transform: translateY(-2px) !important;
+  }
+
+  /* Modal do Raio-X: botão de fechar */
+  [data-modal-raiox] button[aria-label="Fechar"]:hover {
+    background: color-mix(in srgb, var(--ss-cream) 14%, transparent) !important;
+  }
+
+  /* Modal do Raio-X: voltar uma pergunta */
+  [data-modal-raiox] button[data-acao="voltar"]:hover {
+    color: var(--ss-cream) !important;
+  }
+
+  /* Modal do Raio-X: avançar ou enviar */
+  [data-modal-raiox] button[data-acao="avancar"]:hover {
+    transform: translateY(-2px) !important;
+  }
+}
+
+/* ---------- Foco de teclado ----------
+   As quatro réguas de estatística têm tabindex e recebiam contorno ao focar.
+   Usamos :focus-visible, que mostra o contorno para quem navega por teclado
+   sem sujar o clique de mouse. */
+.scp2:focus-visible {
+  outline: 2px solid var(--ss-indigo) !important;
+  outline-offset: 3px !important;
+}
+
+.scp3:focus-visible {
+  outline: 2px solid var(--ss-periwinkle) !important;
+  outline-offset: 3px !important;
+}
+
+/* ===== responsivo.css ===== */
+/* =========================================================================
+   Soulstory · ajustes de responsividade e de toque
+
+   1) Transbordo horizontal
+   Algumas camadas decorativas (o brilho de borda dos cards e o canvas da borda
+   elétrica) são desenhadas propositalmente para fora do elemento, para o brilho
+   escapar das bordas. No desktop sobra espaço e ninguém percebe. No celular elas
+   empurravam a página para os lados: a tela tinha 375px de largura e o conteúdo
+   pedia 425px, então dava para arrastar a página na horizontal, o que atrapalha
+   a leitura e a rolagem. Esse defeito já existia no export original.
+
+   A correção recorta o excesso no contêiner principal da página. Como o excesso
+   é só brilho decorativo, nada de conteúdo se perde. Usamos "clip" e deixamos
+   "hidden" antes, como reserva para navegadores mais antigos.
+
+   2) Alvos de toque
+   As bolinhas do carrossel da história tinham 9px, pequenas demais para o dedo.
+   A área clicável cresce para 44px sem mudar o tamanho do desenho.
+   ========================================================================= */
+
+/* ---------- 1. Recorte do excesso decorativo ---------- */
+#dc-root {
+  overflow-x: hidden;
+  overflow-x: clip;
+}
+
+/* ---------- 2. Bolinhas do carrossel com área de toque maior ----------
+   As bolinhas têm 9px de diâmetro, pequenas demais para o dedo. A área clicável
+   cresce sem mudar o desenho.
+
+   Atenção ao espaçamento: a primeira tentativa usou 44px de largura e as áreas
+   de bolinhas vizinhas passaram a se sobrepor, então tocar numa acionava a outra.
+   Por isso o intervalo entre elas também aumentou: agora são 33px de centro a
+   centro para 32px de área, o que garante que cada toque atinja só uma. */
+.sstk-dots {
+  gap: 24px;
+}
+
+.sstk-dot {
+  position: relative;
+}
+
+.sstk-dot::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 32px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+  /* só amplia a área de toque, não aparece na tela */
+}

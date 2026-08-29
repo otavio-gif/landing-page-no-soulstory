@@ -1,0 +1,13 @@
+# Soulstory · Nó StoryFunnels
+# Sem este arquivo o servidor devolvia a própria página HTML quando um robô
+# pedia /robots.txt, e o rastreador lia isso como milhares de linhas inválidas.
+
+User-agent: *
+Allow: /
+
+# O export antigo e o runtime dele ficam guardados só como histórico.
+# Não são a página do site e não devem aparecer na busca.
+Disallow: /index-export-original.html
+Disallow: /support.js
+
+Sitemap: https://no.soulstory.com.br/sitemap.xml
