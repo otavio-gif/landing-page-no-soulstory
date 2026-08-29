@@ -8,5 +8,9 @@
    Add Medium (n5) in Adobe Fonts → Web Projects → wnf4ddz to recover weight 500. */
 @import url('https://use.typekit.net/wnf4ddz.css');
 
-/* Mono — JetBrains Mono */
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+/* Mono: JetBrains Mono.
+   O carregamento saiu do Google Fonts e passou a ser local, em
+   vendor/fontes/jetbrains-mono.css, ligado direto no HTML da página.
+   A fonte é livre (SIL Open Font License 1.1), então hospedar é permitido, e
+   assim o site para de pedir arquivo a servidor de terceiro.
+   O kit da Adobe acima continua como está, por ser serviço licenciado. */

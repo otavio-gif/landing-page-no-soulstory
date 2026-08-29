@@ -1,0 +1,52 @@
+/* =========================================================================
+   Soulstory · ajustes de responsividade e de toque
+
+   1) Transbordo horizontal
+   Algumas camadas decorativas (o brilho de borda dos cards e o canvas da borda
+   elétrica) são desenhadas propositalmente para fora do elemento, para o brilho
+   escapar das bordas. No desktop sobra espaço e ninguém percebe. No celular elas
+   empurravam a página para os lados: a tela tinha 375px de largura e o conteúdo
+   pedia 425px, então dava para arrastar a página na horizontal, o que atrapalha
+   a leitura e a rolagem. Esse defeito já existia no export original.
+
+   A correção recorta o excesso no contêiner principal da página. Como o excesso
+   é só brilho decorativo, nada de conteúdo se perde. Usamos "clip" e deixamos
+   "hidden" antes, como reserva para navegadores mais antigos.
+
+   2) Alvos de toque
+   As bolinhas do carrossel da história tinham 9px, pequenas demais para o dedo.
+   A área clicável cresce para 44px sem mudar o tamanho do desenho.
+   ========================================================================= */
+
+/* ---------- 1. Recorte do excesso decorativo ---------- */
+#dc-root {
+  overflow-x: hidden;
+  overflow-x: clip;
+}
+
+/* ---------- 2. Bolinhas do carrossel com área de toque maior ----------
+   As bolinhas têm 9px de diâmetro, pequenas demais para o dedo. A área clicável
+   cresce sem mudar o desenho.
+
+   Atenção ao espaçamento: a primeira tentativa usou 44px de largura e as áreas
+   de bolinhas vizinhas passaram a se sobrepor, então tocar numa acionava a outra.
+   Por isso o intervalo entre elas também aumentou: agora são 33px de centro a
+   centro para 32px de área, o que garante que cada toque atinja só uma. */
+.sstk-dots {
+  gap: 24px;
+}
+
+.sstk-dot {
+  position: relative;
+}
+
+.sstk-dot::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 32px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+  /* só amplia a área de toque, não aparece na tela */
+}

@@ -1,0 +1,15 @@
+# Lixo que o Finder do macOS cria sozinho em cada pasta.
+# Entrou no repositório por engano num envio anterior e não deve voltar.
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Lixo de editor
+*.swp
+*~
+.vscode/
+.idea/
+
+# Dependências de build, caso o projeto passe a usar alguma ferramenta.
+node_modules/
