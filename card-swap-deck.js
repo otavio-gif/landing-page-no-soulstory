@@ -20,6 +20,37 @@
     { name: 'Codirect', followers: '227 mil seguidores', num: 'Ticket de R$ 3.600 para R$ 19.800 em menos de 12 meses.', copy: 'Em dois anos, o mês de R$ 260 mil virou mês de R$ 770 mil.' }
   ];
 
+  // ---------- GSAP sob demanda ----------
+  // A biblioteca pesa 70KB e só serve a este efeito e ao outro carrossel, que
+  // ficam bem abaixo da dobra. Baixar no carregamento inicial era peso morto,
+  // então ela só é buscada quando o efeito se aproxima da tela. A promessa fica
+  // guardada em window para os dois carrosséis dividirem o mesmo download.
+  function carregarGsap() {
+    if (window.gsap) return Promise.resolve(window.gsap);
+    if (window.__promessaGsap) return window.__promessaGsap;
+    window.__promessaGsap = new Promise(function (resolver, rejeitar) {
+      var s = document.createElement('script');
+      s.src = 'vendor/gsap.min.js';
+      s.onload = function () { resolver(window.gsap); };
+      s.onerror = rejeitar;
+      document.head.appendChild(s);
+    });
+    return window.__promessaGsap;
+  }
+
+  // Espera o efeito chegar perto da tela para então buscar a biblioteca.
+  function quandoChegarPerto(alvo, aoChegar) {
+    if (!window.IntersectionObserver) { aoChegar(); return; }
+    var obs = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        obs.disconnect();
+        aoChegar();
+      });
+    }, { rootMargin: '600px' });  // folga generosa: dá tempo de baixar antes de aparecer
+    obs.observe(alvo);
+  }
+
   // Medidas e tempos do original.
   var DIST_X = 66, DIST_Y = 58, SKEW = 6, INTERVALO = 4600;
   var CONFIG = { ease: 'elastic.out(0.62,0.9)', durDrop: 1.15, durMove: 1.25, durReturn: 1.25, promoteOverlap: 0.72, returnDelay: 0.08 };
@@ -208,5 +239,7 @@
       reiniciarRelogio();
     }
   }
-  iniciar();
+  quandoChegarPerto(container, function () {
+    carregarGsap().then(iniciar, function () {});
+  });
 })();

@@ -273,12 +273,34 @@ void main() {
     return true;
   }
 
-  // A OGL chega por módulo, então pode demorar alguns quadros.
-  if (!iniciar()) {
-    var tentativas = 0;
-    var espera = setInterval(function () {
-      tentativas += 1;
-      if (iniciar() || tentativas > 80) clearInterval(espera);
-    }, 60);
+  // ---------- OGL sob demanda ----------
+  // A biblioteca pesa 130KB e serve só a esta arte, que fica no fim de uma
+  // página muito longa. Carregar no início era o maior peso morto do site.
+  // Agora ela só é buscada quando a arte se aproxima da tela, com folga
+  // suficiente para chegar antes de aparecer. Se a busca falhar, a imagem de
+  // reserva que já está no HTML continua no lugar e nada quebra.
+  function buscarOgl() {
+    if (window.ogl) return Promise.resolve(window.ogl);
+    return import('./vendor/ogl.module.js').then(function (mod) {
+      window.ogl = mod;
+      return mod;
+    });
+  }
+
+  function acionar() {
+    buscarOgl().then(function () { iniciar(); }, function () { /* fica a reserva */ });
+  }
+
+  if (window.IntersectionObserver) {
+    var obs = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        obs.disconnect();
+        acionar();
+      });
+    }, { rootMargin: '600px' });
+    obs.observe(caixa);
+  } else {
+    acionar();
   }
 })();

@@ -30,6 +30,37 @@
   var movimentoReduzido = false;
   try { movimentoReduzido = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
 
+  // ---------- GSAP sob demanda ----------
+  // A biblioteca pesa 70KB e só serve a este efeito e ao outro carrossel, que
+  // ficam bem abaixo da dobra. Baixar no carregamento inicial era peso morto,
+  // então ela só é buscada quando o efeito se aproxima da tela. A promessa fica
+  // guardada em window para os dois carrosséis dividirem o mesmo download.
+  function carregarGsap() {
+    if (window.gsap) return Promise.resolve(window.gsap);
+    if (window.__promessaGsap) return window.__promessaGsap;
+    window.__promessaGsap = new Promise(function (resolver, rejeitar) {
+      var s = document.createElement('script');
+      s.src = 'vendor/gsap.min.js';
+      s.onload = function () { resolver(window.gsap); };
+      s.onerror = rejeitar;
+      document.head.appendChild(s);
+    });
+    return window.__promessaGsap;
+  }
+
+  // Espera o efeito chegar perto da tela para então buscar a biblioteca.
+  function quandoChegarPerto(alvo, aoChegar) {
+    if (!window.IntersectionObserver) { aoChegar(); return; }
+    var obs = new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        obs.disconnect();
+        aoChegar();
+      });
+    }, { rootMargin: '600px' });  // folga generosa: dá tempo de baixar antes de aparecer
+    obs.observe(alvo);
+  }
+
   function gsapDisponivel() { return window.gsap; }
 
   // ---------- Disposição da pilha ----------
@@ -235,5 +266,7 @@
       iniciarAutomatico();
     }
   }
-  iniciar();
+  quandoChegarPerto(palco, function () {
+    carregarGsap().then(iniciar, function () { iniciar(); }); // se falhar, o modo sem gsap assume
+  });
 })();
