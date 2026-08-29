@@ -161,9 +161,13 @@
   }
 
   // ---------- Giro automático ----------
+  // naTela evita que o deck fique girando fora da vista. Ao voltar, ele retoma
+  // de onde parou, em vez de ter avançado sozinho no escuro.
+  var naTela = false;
+
   function pararRelogio() { if (relogio) { clearInterval(relogio); relogio = null; } }
   function reiniciarRelogio() {
-    if (movimentoReduzido) return;
+    if (movimentoReduzido || !naTela) return;
     pararRelogio();
     relogio = setInterval(girar, INTERVALO);
   }
@@ -191,7 +195,18 @@
     ordem = cartas.map(function (_, i) { return i; });
     reposicionarTudo(g);
     anunciar(0);
-    reiniciarRelogio();
+
+    if (window.IntersectionObserver) {
+      new IntersectionObserver(function (entradas) {
+        entradas.forEach(function (e) {
+          if (e.isIntersecting) { naTela = true; reiniciarRelogio(); }
+          else { naTela = false; pararRelogio(); }
+        });
+      }, { rootMargin: '200px' }).observe(container);
+    } else {
+      naTela = true;
+      reiniciarRelogio();
+    }
   }
   iniciar();
 })();

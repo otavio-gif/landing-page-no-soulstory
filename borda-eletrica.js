@@ -105,7 +105,29 @@
     ctx.scale(dpr, dpr);
   }
 
+  // ---------- Só desenha o que está na tela ----------
+  // Sem isto o contorno era recalculado 60 vezes por segundo desde o
+  // carregamento, mesmo com o card três telas abaixo. Como cada quadro faz
+  // cerca de 30 mil contas de ruído, era processador gasto para desenhar o
+  // que ninguém estava vendo.
+  var naTela = false;
+  var quadro = null;
+
+  function ligar() {
+    if (naTela || movimentoReduzido) return;
+    naTela = true;
+    ultimoQuadro = performance.now(); // evita um salto grande no primeiro quadro
+    quadro = requestAnimationFrame(desenhar);
+  }
+
+  function desligar() {
+    naTela = false;
+    if (quadro) { cancelAnimationFrame(quadro); quadro = null; }
+  }
+
   function desenhar(agora) {
+    quadro = null;
+    if (!naTela && !movimentoReduzido) return;
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
     if (dpr !== dprAnterior) ajustarTamanho();
 
@@ -141,7 +163,7 @@
     ctx.closePath();
     ctx.stroke();
 
-    if (!movimentoReduzido) requestAnimationFrame(desenhar);
+    if (naTela && !movimentoReduzido) quadro = requestAnimationFrame(desenhar);
   }
 
   // ---------- Hover no botão de agendamento ----------
@@ -159,5 +181,15 @@
   ajustarTamanho();
   if (window.ResizeObserver) new ResizeObserver(ajustarTamanho).observe(container);
   ultimoQuadro = performance.now();
-  requestAnimationFrame(desenhar);
+
+  if (movimentoReduzido) {
+    // movimento reduzido: um quadro só, parado, como já era
+    requestAnimationFrame(desenhar);
+  } else if (window.IntersectionObserver) {
+    new IntersectionObserver(function (entradas) {
+      entradas.forEach(function (e) { if (e.isIntersecting) ligar(); else desligar(); });
+    }, { rootMargin: '200px' }).observe(container);
+  } else {
+    ligar(); // navegador sem observador: mantém o comportamento antigo
+  }
 })();

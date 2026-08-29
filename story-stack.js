@@ -106,9 +106,13 @@
   }
 
   // ---------- Avanço automático ----------
+  // naTela evita que a pilha fique girando sozinha enquanto está fora da vista.
+  // O ponteiro sobre a pilha também pausa, e as duas condições convivem.
+  var naTela = false;
+
   function pararAutomatico() { if (automatico) { clearInterval(automatico); automatico = null; } }
   function iniciarAutomatico() {
-    if (movimentoReduzido) return;
+    if (movimentoReduzido || !naTela) return;
     pararAutomatico();
     automatico = setInterval(mandarParaTras, 6000);
   }
@@ -218,7 +222,18 @@
     marcarBolinhas(0);
     anunciar(0);
     setTimeout(function () { varrer(cartas[ordem[0]]); }, 480);
-    iniciarAutomatico();
+
+    if (window.IntersectionObserver) {
+      new IntersectionObserver(function (entradas) {
+        entradas.forEach(function (e) {
+          if (e.isIntersecting) { naTela = true; iniciarAutomatico(); }
+          else { naTela = false; pararAutomatico(); }
+        });
+      }, { rootMargin: '200px' }).observe(palco);
+    } else {
+      naTela = true;
+      iniciarAutomatico();
+    }
   }
   iniciar();
 })();

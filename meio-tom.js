@@ -227,9 +227,30 @@ void main() {
     caixa.addEventListener('pointerenter', aoMover, { passive: true });
     caixa.addEventListener('pointerleave', aoSair, { passive: true });
 
+    // ---------- Só renderiza o que está na tela ----------
+    // Esta arte fica no fim de uma página muito longa, mas o WebGL começava a
+    // desenhar junto com o hero e não parava mais. Agora ele só trabalha
+    // quando a arte se aproxima da tela.
+    var naTela = false;
+    var quadro = null;
     var anterior = performance.now();
+
+    function ligar() {
+      if (naTela) return;
+      naTela = true;
+      anterior = performance.now();
+      quadro = requestAnimationFrame(laco);
+    }
+
+    function desligar() {
+      naTela = false;
+      if (quadro) { cancelAnimationFrame(quadro); quadro = null; }
+    }
+
     function laco(agora) {
-      requestAnimationFrame(laco);
+      quadro = null;
+      if (!naTela) return;
+      quadro = requestAnimationFrame(laco);
       var dt = Math.min(0.05, Math.max(0.001, (agora - anterior) / 1000));
       anterior = agora;
       var a = 1 - Math.exp(-dt / Math.max(0.001, CONFIG.seguir));
@@ -242,7 +263,13 @@ void main() {
       uniforms.uActivity.value = ponteiro.ativo;
       renderer.render({ scene: malha });
     }
-    requestAnimationFrame(laco);
+    if (window.IntersectionObserver) {
+      new IntersectionObserver(function (entradas) {
+        entradas.forEach(function (e) { if (e.isIntersecting) ligar(); else desligar(); });
+      }, { rootMargin: '200px' }).observe(caixa);
+    } else {
+      ligar(); // navegador sem observador: mantém o comportamento antigo
+    }
     return true;
   }
 
