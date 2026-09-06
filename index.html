@@ -67,6 +67,26 @@
     .cc-botao:hover { background: var(--ss-lavender); transform: translateY(-2px); }
     .cc-link:focus-visible, .cc-botao:focus-visible { outline: 3px solid var(--ss-periwinkle); outline-offset: 3px; }
     @media (prefers-reduced-motion: reduce) { .cc-caixa { animation: none; } .cc-botao:hover { transform: none; } }
+
+    /* Rodape. Void fechando a pagina: a ultima secao e Parchment, entao ele
+       continua a alternancia de capitulos e le como fim de documento, sem
+       competir com o CTA. */
+    .rodape { background: var(--ss-ink); border-top: 1px solid var(--line-whisper-dark); padding: clamp(40px, 5vw, 64px) clamp(20px, 4vw, 40px); }
+    .rodape-interno { max-width: var(--container-max); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: var(--sp-6); flex-wrap: wrap; }
+    .rodape-links { display: flex; align-items: center; gap: var(--sp-6); flex-wrap: wrap; }
+    /* Sem sublinhado de saida: sao tres links soltos numa fileira, e sublinhar
+       os tres poluiria. O sublinhado aparece no hover. */
+    .rodape-link { font-family: var(--font-sans); font-size: 14px; font-weight: 500; color: var(--text-secondary-dark); text-decoration: none; background: none; border: 0; padding: 0; cursor: pointer; transition: color var(--dur-fast) var(--ease-out); }
+    .rodape-link:hover { color: var(--ss-cream); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+    .rodape-link:focus-visible { outline: 3px solid var(--ss-periwinkle); outline-offset: 3px; border-radius: var(--r-xs); }
+    .rodape-marca { display: flex; align-items: center; gap: 12px; }
+    .rodape-marca img { width: 26px; height: auto; display: block; opacity: 0.85; }
+    .rodape-assinatura { margin: 0; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; color: var(--text-muted-dark); }
+    @media (max-width: 700px) { .rodape-interno { flex-direction: column; align-items: flex-start; gap: var(--sp-5); } }
+    /* Enquanto o cartao de cookies esta na tela ele flutua sobre o canto
+       inferior, bem onde ficam os links do rodape. O espaco extra aqui garante
+       que a Politica de Privacidade nunca fique atras dele. */
+    .cc-aberto .rodape { padding-bottom: calc(clamp(40px, 5vw, 64px) + 160px); }
     @keyframes raioxBarrel { 0% { left:82%; opacity:0; } 8% { opacity:1; } 88% { opacity:1; } 100% { left:3%; opacity:0; } }
     @keyframes raioxSpin { to { transform: rotate(-360deg); } }
     @keyframes raioxBob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
@@ -1268,7 +1288,22 @@
     </div>
     <p data-dc-tpl="677" data-meio-tom-instrucao style="margin: 10px 0px 0px; font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-tertiary);">Passe o mouse · toque e arraste no celular</p>
   </div></section>
-</main></div></div>
+</main>
+<footer class="rodape">
+  <div class="rodape-interno">
+    <nav class="rodape-links" aria-label="Links do rodapé">
+      <a class="rodape-link" href="/politica-de-privacidade" target="_blank" rel="noopener">Política de Privacidade</a>
+      <button type="button" class="rodape-link" data-acao="preferencias-cookies" hidden>Preferências de cookies</button>
+      <a class="rodape-link" href="https://www.instagram.com/soulstory.br/" target="_blank" rel="noopener">Instagram</a>
+    </nav>
+    <div class="rodape-marca">
+      <img src="images/symbol-cream.png" alt="" width="140" height="107">
+      <p class="rodape-assinatura">© <span id="rodape-ano">2026</span> Soulstory · Todos os direitos reservados</p>
+    </div>
+  </div>
+</footer>
+</div></div>
+<script>document.getElementById('rodape-ano').textContent = new Date().getFullYear();</script>
 <script src="modal-raiox.js" defer></script>
 <script src="consentimento-cookies.js" defer></script>
 <script src="faq.js" defer></script>

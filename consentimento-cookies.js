@@ -84,10 +84,13 @@
   function mostrar() {
     if (!raiz) montar();
     raiz.style.display = '';
+    // A marca na raiz faz o rodape reservar espaco para os proprios links.
+    document.documentElement.classList.add('cc-aberto');
   }
 
   function esconder() {
     if (raiz) raiz.style.display = 'none';
+    document.documentElement.classList.remove('cc-aberto');
   }
 
   // O hero ocupa a tela inteira e coloca os botoes principais perto da base,
@@ -123,7 +126,22 @@
     mostrar();
   };
 
+  // ---------- Botao de preferencias do rodape ----------
+  // O botao nasce com hidden no HTML e so aparece aqui. Se este script falhar,
+  // ele nao aparece, em vez de aparecer e nao fazer nada ao ser clicado.
+  function ligarBotoesPreferencias() {
+    var botoes = document.querySelectorAll('[data-acao="preferencias-cookies"]');
+    for (var i = 0; i < botoes.length; i++) botoes[i].hidden = false;
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('[data-acao="preferencias-cookies"]')) {
+        window.soulstoryPreferenciasCookies();
+      }
+    });
+  }
+
   // ---------- Entrada ----------
+  ligarBotoesPreferencias();
+
   var escolha = lerEscolha();
   if (escolha === 'aceito') {
     carregarGtm();
