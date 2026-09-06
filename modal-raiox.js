@@ -4,6 +4,11 @@
 (function () {
   'use strict';
 
+  // ---------- Backend ----------
+  // Endpoint publico do Google Apps Script que grava na planilha e dispara o
+  // email de aviso. E uma URL de publicacao, nao um segredo.
+  var URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbym9ibB2-BCfY4l_2apbnYJX9o0zWaqniHPO_lGTsSiozSGvGETAB-hX69zwJcI84yr/exec';
+
   // ---------- Sprites em pixel art (mesma paleta do original) ----------
   var PALETA = { o: '#0C0B14', a: '#3D396E', h: '#8E9FEE', s: '#8CC6FF', f: '#FAF8F5', m: '#E1E4F6', g: '#E9BE58', k: '#4A3B0C', r: '#9B4444', d: '#5E2A2A' };
 
@@ -57,7 +62,7 @@
   var ESTILO_AVANCAR_FINAL = 'background:#E9BE58; color:#0C0B14; box-shadow:0 12px 30px -12px rgba(233,190,88,0.65); border:none; border-radius:13px; padding:15px 32px; font-family:var(--font-sans); font-weight:600; font-size:17px; cursor:pointer; transition:transform .15s ease, box-shadow .2s ease; white-space:nowrap';
 
   // ---------- Estado ----------
-  var estado = { aberto: false, passo: 0, enviado: false, form: {} };
+  var estado = { aberto: false, passo: 0, enviado: false, enviando: false, form: {} };
   PERGUNTAS.forEach(function (q) { estado.form[q.key] = ''; });
   var raiz = null;            // container fixo do modal
   var botaoOrigem = null;     // quem abriu, para devolver o foco ao fechar
@@ -287,11 +292,60 @@
     irPara(estado.passo + 1);
   }
 
+  // Monta o objeto que vai para a planilha. As chaves saem da propria lista de
+  // PERGUNTAS, entao a grafia esperada pelo Apps Script nunca sai de sincronia.
+  function montarPayload() {
+    var dados = {};
+    PERGUNTAS.forEach(function (q) {
+      dados[q.key] = (estado.form[q.key] || '').trim();
+    });
+    // Na planilha o WhatsApp vai limpo, so os digitos, sem a mascara da tela.
+    dados.whatsapp = dados.whatsapp.replace(/\D/g, '');
+    return dados;
+  }
+
   function enviar() {
-    // O envio real (Google Sheets via Apps Script) entra na proxima fase do projeto.
-    pararJogo();
-    estado.enviado = true;
-    renderizar();
+    if (estado.enviando) return;
+
+    var botao = el('conteudo').querySelector('[data-acao="avancar"]');
+    estado.enviando = true;
+    mostrarErro('');
+    if (botao) {
+      botao.disabled = true;
+      botao.textContent = 'Enviando...';
+      botao.style.opacity = '0.65';
+      botao.style.cursor = 'progress';
+    }
+
+    function liberarBotao() {
+      estado.enviando = false;
+      if (botao) {
+        botao.disabled = false;
+        botao.textContent = 'Agendar Raio-X Gratuito';
+        botao.style.opacity = '';
+        botao.style.cursor = 'pointer';
+      }
+    }
+
+    // O cabecalho vai como text/plain de proposito: declarar application/json faz
+    // o navegador disparar antes uma requisicao de verificacao (preflight CORS),
+    // que o Apps Script nao responde. O corpo continua sendo JSON puro, lido do
+    // outro lado com JSON.parse(e.postData.contents).
+    fetch(URL_APPS_SCRIPT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(montarPayload()),
+      redirect: 'follow'
+    }).then(function (resposta) {
+      if (!resposta.ok) throw new Error('HTTP ' + resposta.status);
+      pararJogo();
+      estado.enviando = false;
+      estado.enviado = true;
+      renderizar();
+    })['catch'](function () {
+      liberarBotao();
+      mostrarErro('Não foi possível enviar agora. Verifique a sua conexão e tente de novo.');
+    });
   }
 
   function abrir(origem) {
@@ -300,6 +354,7 @@
     estado.aberto = true;
     estado.passo = 0;
     estado.enviado = false;
+    estado.enviando = false;
     try { document.body.style.overflow = 'hidden'; } catch (e) {}
     raiz.style.display = 'flex';
     renderizar();
