@@ -42,6 +42,11 @@
     .raiox-scroll { scrollbar-width: none; -ms-overflow-style: none; }
     .raiox-scroll::-webkit-scrollbar { width: 0 !important; height: 0 !important; display: none; }
     .raiox-field:-webkit-autofill, .raiox-field:-webkit-autofill:focus { -webkit-text-fill-color:#FAF8F5; caret-color:#FAF8F5; -webkit-box-shadow:0 0 0 1000px rgba(32,30,54,0.92) inset; transition:background-color 9999s ease-out 0s; }
+    /* Link dos avisos de privacidade do modal. Precisa de cor propria: a regra
+       global de link acima e indigo, que some no fundo escuro do painel. */
+    .raiox-aviso a { color: var(--ss-periwinkle); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: rgba(142,159,238,0.45); transition: color var(--dur-fast) var(--ease-out), text-decoration-color var(--dur-fast) var(--ease-out); }
+    .raiox-aviso a:hover { color: var(--ss-cream); text-decoration-color: var(--ss-cream); }
+    .raiox-aviso a:focus-visible { outline: 3px solid var(--ss-periwinkle); outline-offset: 3px; border-radius: var(--r-xs); }
     @keyframes raioxBarrel { 0% { left:82%; opacity:0; } 8% { opacity:1; } 88% { opacity:1; } 100% { left:3%; opacity:0; } }
     @keyframes raioxSpin { to { transform: rotate(-360deg); } }
     @keyframes raioxBob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }

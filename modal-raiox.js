@@ -61,6 +61,17 @@
   var ESTILO_AVANCAR = 'background:var(--ss-periwinkle); color:#0C0B14; box-shadow:0 10px 26px -12px rgba(142,159,238,0.7); border:none; border-radius:13px; padding:15px 32px; font-family:var(--font-sans); font-weight:600; font-size:17px; cursor:pointer; transition:transform .15s ease, box-shadow .2s ease; white-space:nowrap';
   var ESTILO_AVANCAR_FINAL = 'background:#E9BE58; color:#0C0B14; box-shadow:0 12px 30px -12px rgba(233,190,88,0.65); border:none; border-radius:13px; padding:15px 32px; font-family:var(--font-sans); font-weight:600; font-size:17px; cursor:pointer; transition:transform .15s ease, box-shadow .2s ease; white-space:nowrap';
 
+  // ---------- Avisos de privacidade (LGPD) ----------
+  // O link abre em nova aba de proposito. O que a pessoa ja preencheu vive so
+  // na memoria, em estado.form, entao sair da pagina apagaria tudo. Com aba
+  // nova, o modal continua intacto atras, na mesma pergunta.
+  var LINK_POLITICA = '<a href="/politica-de-privacidade" target="_blank" rel="noopener">Política de Privacidade</a>';
+  var ESTILO_AVISO = 'margin:20px 0 0; font-family:var(--font-sans); font-size:14px; line-height:1.5; color:var(--text-tertiary-dark); text-wrap:pretty';
+
+  function htmlAviso(texto) {
+    return '<p class="raiox-aviso" style="' + ESTILO_AVISO + '">' + texto + '</p>';
+  }
+
   // ---------- Estado ----------
   var estado = { aberto: false, passo: 0, enviado: false, enviando: false, id: '', form: {} };
   PERGUNTAS.forEach(function (q) { estado.form[q.key] = ''; });
@@ -228,6 +239,15 @@
       }).join('') + '</div>';
     }
     h += '<div data-papel="erro" style="margin-top:16px; font-size:15px; font-weight:500; color:#F1A9A9; display:none"></div>';
+
+    // Transparencia LGPD. Na entrada, porque o lead parcial ja sai no primeiro
+    // Continuar. No fim, junto do botao que envia de vez. As telas do meio
+    // ficam limpas, para o aviso nao virar ruido nas dez perguntas.
+    if (estado.passo === 0) {
+      h += htmlAviso('Seus dados são tratados conforme nossa ' + LINK_POLITICA + '.');
+    } else if (ultimo) {
+      h += htmlAviso('Ao enviar, você concorda com nossa ' + LINK_POLITICA + '.');
+    }
 
     // entrada suave da pergunta (mesma transicao do original)
     area.style.cssText = 'opacity:0; transform:translateY(14px)';
