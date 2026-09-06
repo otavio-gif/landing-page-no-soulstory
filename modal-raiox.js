@@ -9,6 +9,33 @@
   // email de aviso. E uma URL de publicacao, nao um segredo.
   var URL_APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbym9ibB2-BCfY4l_2apbnYJX9o0zWaqniHPO_lGTsSiozSGvGETAB-hX69zwJcI84yr/exec';
 
+  // ---------- Medicao (GTM / GA4) ----------
+  // Sinalizacao para o GTM, nada mais. Nunca interfere no envio do lead ao
+  // Apps Script, que funciona com ou sem consentimento de cookies.
+  //
+  // So empurra com aceite: sem consentimento nada entra no dataLayer, entao o
+  // GTM nao encontra historico para contabilizar depois. Se o script de
+  // consentimento nem carregou, a resposta e a mesma, nao medir.
+  //
+  // Nunca viaja dado pessoal daqui. Nome, WhatsApp, e-mail, empresa e
+  // faturamento ficam no envio ao Apps Script e nao entram no dataLayer.
+  function avisarGtm(evento, extras) {
+    try {
+      if (typeof window.soulstoryCookiesAceitos !== 'function') return;
+      if (!window.soulstoryCookiesAceitos()) return;
+      window.dataLayer = window.dataLayer || [];
+      var dados = { event: evento };
+      if (extras) {
+        for (var chave in extras) {
+          if (Object.prototype.hasOwnProperty.call(extras, chave)) dados[chave] = extras[chave];
+        }
+      }
+      window.dataLayer.push(dados);
+    } catch (e) {
+      // Medicao nunca derruba o formulario.
+    }
+  }
+
   // ---------- Sprites em pixel art (mesma paleta do original) ----------
   var PALETA = { o: '#0C0B14', a: '#3D396E', h: '#8E9FEE', s: '#8CC6FF', f: '#FAF8F5', m: '#E1E4F6', g: '#E9BE58', k: '#4A3B0C', r: '#9B4444', d: '#5E2A2A' };
 
@@ -398,6 +425,10 @@
       redirect: 'follow'
     }).then(function (resposta) {
       if (!resposta.ok) throw new Error('HTTP ' + resposta.status);
+      // Depois do throw acima: so chega aqui quando o Apps Script confirmou o
+      // lead. E a mesma linha que libera a tela de agradecimento, entao evento
+      // e tela nunca divergem. Os parciais ficam de fora: sao outra funcao.
+      avisarGtm('raiox_completou', { raiox_id: estado.id });
       pararJogo();
       estado.enviando = false;
       estado.enviado = true;
@@ -421,6 +452,7 @@
     raiz.style.display = 'flex';
     renderizar();
     iniciarJogo();
+    avisarGtm('raiox_abriu');
   }
 
   function fechar() {

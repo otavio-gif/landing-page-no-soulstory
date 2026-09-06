@@ -119,6 +119,13 @@
     // todas as visitas seguintes.
   }
 
+  // Fonte da verdade do consentimento para quem precisa medir. O modal do
+  // Raio-X pergunta aqui antes de empurrar qualquer evento para o dataLayer,
+  // para nada ser contabilizado retroativamente por quem nunca aceitou.
+  window.soulstoryCookiesAceitos = function () {
+    return lerEscolha() === 'aceito';
+  };
+
   // Ponto de revogacao. Enquanto o site nao tem rodape, esta funcao e o
   // caminho para reabrir a escolha: window.soulstoryPreferenciasCookies().
   window.soulstoryPreferenciasCookies = function () {
