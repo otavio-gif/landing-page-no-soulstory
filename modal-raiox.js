@@ -62,8 +62,9 @@
   var ESTILO_AVANCAR_FINAL = 'background:#E9BE58; color:#0C0B14; box-shadow:0 12px 30px -12px rgba(233,190,88,0.65); border:none; border-radius:13px; padding:15px 32px; font-family:var(--font-sans); font-weight:600; font-size:17px; cursor:pointer; transition:transform .15s ease, box-shadow .2s ease; white-space:nowrap';
 
   // ---------- Estado ----------
-  var estado = { aberto: false, passo: 0, enviado: false, enviando: false, form: {} };
+  var estado = { aberto: false, passo: 0, enviado: false, enviando: false, id: '', form: {} };
   PERGUNTAS.forEach(function (q) { estado.form[q.key] = ''; });
+  var filaParcial = Promise.resolve();  // encadeia os envios parciais, um de cada vez
   var raiz = null;            // container fixo do modal
   var botaoOrigem = null;     // quem abriu, para devolver o foco ao fechar
   var jogo = { ligado: false, raf: null, barril: null, proximo: 0, anteriorT: 0, pulou: false };
@@ -289,19 +290,58 @@
     if (q.required && !v) { mostrarErro(q.kind === 'choice' ? 'Selecione uma opção para continuar.' : 'Este campo é obrigatório.'); return; }
     if (q.key === 'email' && v && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) { mostrarErro('Digite um e-mail válido.'); return; }
     if (estado.passo >= PERGUNTAS.length - 1) { enviar(); return; }
+    // Depois das validacoes, para clique frustrado nao virar requisicao.
+    enviarParcial();
     irPara(estado.passo + 1);
   }
 
-  // Monta o objeto que vai para a planilha. As chaves saem da propria lista de
-  // PERGUNTAS, entao a grafia esperada pelo Apps Script nunca sai de sincronia.
-  function montarPayload() {
-    var dados = {};
+  // Identificador da sessao de preenchimento. O mesmo id acompanha os parciais e
+  // o envio completo, e e por ele que o Apps Script atualiza a linha em vez de
+  // criar outra. Nasce so na primeira vez que ha algo real para enviar, entao
+  // quem abre o modal e fecha sem responder nada nao gera registro nenhum.
+  function garantirId() {
+    if (!estado.id) {
+      estado.id = Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+    }
+    return estado.id;
+  }
+
+  // Monta o objeto que vai para a planilha. As chaves dos campos saem da propria
+  // lista de PERGUNTAS, entao a grafia esperada pelo Apps Script nunca sai de
+  // sincronia. O que ainda nao foi respondido viaja como string vazia.
+  function montarPayload(status) {
+    var dados = { status: status, id: garantirId() };
     PERGUNTAS.forEach(function (q) {
       dados[q.key] = (estado.form[q.key] || '').trim();
     });
     // Na planilha o WhatsApp vai limpo, so os digitos, sem a mascara da tela.
     dados.whatsapp = dados.whatsapp.replace(/\D/g, '');
     return dados;
+  }
+
+  // Lead parcial: sai a cada pergunta vencida, para nao perder quem desiste no
+  // meio do caminho. Roda em segundo plano e falha em silencio, porque e um
+  // bonus de captacao e nunca deve atrapalhar quem esta preenchendo.
+  function enviarParcial() {
+    // O retrato e tirado agora, no clique, e nao na hora em que a requisicao
+    // sair, para o payload refletir exatamente este passo.
+    var corpo = JSON.stringify(montarPayload('parcial'));
+    // A fila encadeia um envio depois do outro. Disparados em paralelo, dois
+    // parciais podem chegar fora de ordem e o mais antigo sobrescrever o mais
+    // novo na planilha. Nada disso esta no caminho da pessoa: ela ja avancou.
+    filaParcial = filaParcial.then(function () {
+      // keepalive faz a requisicao sobreviver ao fechamento da aba, que e
+      // justamente quando o ultimo parcial vale mais.
+      return fetch(URL_APPS_SCRIPT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: corpo,
+        redirect: 'follow',
+        keepalive: true
+      });
+    })['catch'](function () {
+      // Silencio proposital: parcial que falha nao vira erro na tela.
+    });
   }
 
   function enviar() {
@@ -334,7 +374,7 @@
     fetch(URL_APPS_SCRIPT, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(montarPayload()),
+      body: JSON.stringify(montarPayload('completo')),
       redirect: 'follow'
     }).then(function (resposta) {
       if (!resposta.ok) throw new Error('HTTP ' + resposta.status);
@@ -355,6 +395,8 @@
     estado.passo = 0;
     estado.enviado = false;
     estado.enviando = false;
+    estado.id = '';
+    filaParcial = Promise.resolve();
     try { document.body.style.overflow = 'hidden'; } catch (e) {}
     raiz.style.display = 'flex';
     renderizar();
