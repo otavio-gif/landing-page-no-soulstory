@@ -47,6 +47,26 @@
     .raiox-aviso a { color: var(--ss-periwinkle); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: rgba(142,159,238,0.45); transition: color var(--dur-fast) var(--ease-out), text-decoration-color var(--dur-fast) var(--ease-out); }
     .raiox-aviso a:hover { color: var(--ss-cream); text-decoration-color: var(--ss-cream); }
     .raiox-aviso a:focus-visible { outline: 3px solid var(--ss-periwinkle); outline-offset: 3px; border-radius: var(--r-xs); }
+
+    /* Banner de consentimento de cookies. Fica em z-index 110: acima do
+       conteudo (que vai ate 100) e abaixo do modal do Raio-X (120), entao o
+       backdrop do modal o cobre sozinho quando o formulario abre. */
+    /* Cartao de canto, nao faixa de largura total: medido em 1440px, a faixa
+       larga cobria a base do CTA principal da primeira dobra. Ancorado a
+       esquerda, o miolo da tela, onde vivem os botoes, fica livre. */
+    .cc-faixa { position: fixed; left: 0; bottom: 0; z-index: 110; display: flex; padding: 10px; pointer-events: none; }
+    .cc-caixa { pointer-events: auto; box-sizing: border-box; width: min(380px, calc(100vw - 20px)); display: flex; flex-direction: column; gap: 12px; padding: 14px 16px; background: var(--surface-card); border: 1px solid var(--line-default); border-radius: var(--r-lg); box-shadow: var(--shadow-3); animation: ccSobe var(--dur-slow) var(--ease-out); }
+    @keyframes ccSobe { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .cc-texto { margin: 0; font-family: var(--font-sans); font-size: 13.5px; line-height: 1.5; color: var(--text-secondary); text-wrap: pretty; }
+    .cc-link { color: var(--brand); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: var(--line-default); transition: color var(--dur-fast) var(--ease-out), text-decoration-color var(--dur-fast) var(--ease-out); }
+    .cc-link:hover { color: var(--brand-soft); text-decoration-color: var(--brand-soft); }
+    .cc-botoes { display: flex; gap: 10px; }
+    /* Os dois botoes sao identicos de proposito: mesmo tamanho, mesma borda,
+       mesma cor. So o rotulo muda. Nenhum dos dois recebe destaque. */
+    .cc-botao { flex: 1; padding: 9px 20px; background: var(--surface-card); border: 1px solid var(--brand); border-radius: var(--r-md); font-family: var(--font-sans); font-size: 15px; font-weight: 600; color: var(--brand); cursor: pointer; transition: background-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out); }
+    .cc-botao:hover { background: var(--ss-lavender); transform: translateY(-2px); }
+    .cc-link:focus-visible, .cc-botao:focus-visible { outline: 3px solid var(--ss-periwinkle); outline-offset: 3px; }
+    @media (prefers-reduced-motion: reduce) { .cc-caixa { animation: none; } .cc-botao:hover { transform: none; } }
     @keyframes raioxBarrel { 0% { left:82%; opacity:0; } 8% { opacity:1; } 88% { opacity:1; } 100% { left:3%; opacity:0; } }
     @keyframes raioxSpin { to { transform: rotate(-360deg); } }
     @keyframes raioxBob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
@@ -1250,6 +1270,7 @@
   </div></section>
 </main></div></div>
 <script src="modal-raiox.js" defer></script>
+<script src="consentimento-cookies.js" defer></script>
 <script src="faq.js" defer></script>
 <script src="cards-motivo.js" defer></script>
 <script src="story-stack.js" defer></script>
