@@ -5,9 +5,11 @@
 User-agent: *
 Allow: /
 
-# O export antigo e o runtime dele ficam guardados só como histórico.
-# Não são a página do site e não devem aparecer na busca.
+# O export antigo, o runtime dele e um fragmento de componente que sobrou
+# ficam guardados só como histórico. Não são páginas do site e não devem
+# aparecer na busca.
 Disallow: /index-export-original.html
 Disallow: /support.js
+Disallow: /RaioButton.dc.html
 
 Sitemap: https://no.soulstory.com.br/sitemap.xml
