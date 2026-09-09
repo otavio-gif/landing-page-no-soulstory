@@ -26,7 +26,6 @@
 
   var raiz = null;
   var aberto = false;
-  var pendente = false;   // sinal de saida guardado, esperando o banner de cookies sair
   var focoAnterior = null;
   var nascimento = Date.now();
   var movimentoReduzido = window.matchMedia &&
@@ -50,6 +49,11 @@
     try { return window.getComputedStyle(elemento).display !== 'none'; } catch (e) { return false; }
   }
 
+  // O banner de cookies NAO entra aqui de proposito. Ja foi tentado esperar a
+  // decisao antes de abrir, e na pratica o cartao nunca aparecia: quase
+  // ninguem clica no banner. O pop-up abre por cima, o veu escurece o banner
+  // por um momento e a escolha continua intacta quando o cartao fecha. Nenhum
+  // rastreador dispara sem aceite de qualquer forma.
   function bloqueado() {
     if (aberto || jaMostrou()) return true;
     if (Date.now() - nascimento < TEMPO_MINIMO) return true;
@@ -104,11 +108,6 @@
   function abrir() {
     if (bloqueado()) return;
 
-    // Cobrir a escolha de cookies com um convite de marketing seria feio e,
-    // pior, tiraria da frente uma decisao que e da pessoa. Entao o sinal de
-    // saida nao se perde: fica guardado e o cartao entra logo depois.
-    if (visivel(document.querySelector('.cc-faixa'))) { pendente = true; return; }
-
     marcarMostrado();
     if (!raiz) montar();
     aberto = true;
@@ -148,17 +147,6 @@
       e.preventDefault();
       primeiro.focus();
     }
-  });
-
-  // Aceitar ou recusar cookies libera o sinal que ficou guardado. O respiro
-  // evita que a saida do banner colida com a entrada do cartao.
-  document.addEventListener('click', function (e) {
-    if (!pendente || !e.target.closest) return;
-    if (!e.target.closest('.cc-faixa [data-acao]')) return;
-    window.setTimeout(function () {
-      pendente = false;
-      abrir();
-    }, 450);
   });
 
   // ---------- Sensores de saida ----------
