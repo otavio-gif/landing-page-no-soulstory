@@ -2,8 +2,8 @@
 // O herói caminha da esquerda para a direita conforme a leitura avança, até
 // alcançar a princesa quando o botão de agendamento entra na tela. O dragão
 // para de soltar fogo e tomba, e faíscas aparecem.
-// A barra só se mostra depois que a leitura começa, para não competir com o
-// topo da página.
+// A barra só se mostra depois que o botão de agendar do cabeçalho sai da tela,
+// para as duas chamadas não competirem no topo.
 (function () {
   'use strict';
 
@@ -43,7 +43,7 @@
   // ---------- Estado ----------
   var venceu = false, recuando = false, andando = false, quadro = 0;
   var ultimaRolagem = 0;
-  var alvo = null;
+  var alvo = null, inicio = null;
   var faiscas = [];
 
   function criarFaiscas() {
@@ -76,6 +76,7 @@
     var vh = window.innerHeight || 1;
 
     if (!alvo || !alvo.isConnected) alvo = document.querySelector('[data-hp-goal]');
+    if (!inicio || !inicio.isConnected) inicio = document.querySelector('[data-hp-inicio]');
 
     var avanco = 0, ganhou = false, recuo = false;
     if (alvo && alvo.getBoundingClientRect().height > 0) {
@@ -93,10 +94,11 @@
       }
     }
 
-    // A barra aparece quando a leitura comeca. O gatilho antigo era a aba TRAMA
-    // sair da tela; com a aba fora da pagina, quem marca esse momento e a
-    // propria rolagem. A zona morta curta evita a barra piscar parada no topo.
-    var mostrar = sy > 16;
+    // A barra so entra depois que o botao de agendar do cabecalho sai da tela.
+    // Enquanto ele esta visivel, ele ja e a chamada para acao do topo, e a barra
+    // disputaria a mesma faixa da tela. A rolagem so responde por isso se o
+    // botao sumir do HTML um dia, para a barra nao voltar a nascer colada no topo.
+    var mostrar = inicio ? inicio.getBoundingClientRect().bottom < 0 : sy > 16;
     barra.style.setProperty('--p', avanco.toFixed(4));
     barra.style.opacity = mostrar ? '1' : '0';
 
