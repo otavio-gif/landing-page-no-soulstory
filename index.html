@@ -10,7 +10,306 @@
 <link rel="preconnect" href="https://use.typekit.net" crossorigin>
 <link rel="preconnect" href="https://p.typekit.net" crossorigin>
 <link rel="stylesheet" href="https://use.typekit.net/wnf4ddz.css">
-<link rel="stylesheet" href="estilos-base.css">
+<!-- estilos-base:inicio -->
+<style>
+/* =========================================================================
+   Soulstory · fontes, tokens e design system
+   ARQUIVO GERADO. Não edite aqui: mexa nos arquivos de origem e rode
+   python3 construir-estilos.py para refazer.
+   Origem:
+     vendor/fontes/jetbrains-mono.css
+     _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/fonts.css
+     _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/colors.css
+     _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/typography.css
+     _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/spacing.css
+     _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/motion.css
+     _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/base.css
+     _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/styles.css
+   ========================================================================= */
+
+/* ===== vendor/fontes/jetbrains-mono.css ===== */
+/* =========================================================================
+   JetBrains Mono servido do próprio site.
+   Fonte livre, licença SIL Open Font License 1.1, que permite hospedar.
+
+   Só os subconjuntos latinos, que é o que este site em português usa.
+   É uma fonte variável: o mesmo arquivo atende os pesos 400 e 500, por isso
+   cada subconjunto tem um arquivo só e a declaração traz a faixa de peso.
+
+   Trazer a fonte para casa tira o último pedido a servidores do Google, o que
+   também evita mandar o IP de quem visita para fora sem necessidade.
+   ========================================================================= */
+
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url(vendor/fontes/jetbrains-mono-latin-ext-400.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url(vendor/fontes/jetbrains-mono-latin-400.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ===== _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/fonts.css ===== */
+/* =========================================================================
+   Soulstory · Fonts
+   Mr Eaves Sans OT + Minion 3 Pro via Adobe Typekit · JetBrains Mono (Google)
+   ========================================================================= */
+
+/* Adobe Fonts kit: mr-eaves-sans, mr-eaves-modern, minion-3 (400/700 + italics).
+   NOTE: the live kit ships 400 + 700 only; requests for w500 fall back to 400.
+   Add Medium (n5) in Adobe Fonts → Web Projects → wnf4ddz to recover weight 500. */
+
+
+/* Mono: JetBrains Mono.
+   O carregamento saiu do Google Fonts e passou a ser local, em
+   vendor/fontes/jetbrains-mono.css, ligado direto no HTML da página.
+   A fonte é livre (SIL Open Font License 1.1), então hospedar é permitido, e
+   assim o site para de pedir arquivo a servidor de terceiro.
+   O kit da Adobe acima continua como está, por ser serviço licenciado. */
+
+/* ===== _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/colors.css ===== */
+/* =========================================================================
+   Soulstory · Color
+   An indigo–violet axis, warmed by parchment. Parchment ↔ Void.
+   No warm chromatics. Saturation restrained. Quiet authority, never flash.
+   ========================================================================= */
+
+:root {
+  /* ---- Brand ---- */
+  --ss-indigo:         #3D396E;   /* Indigo Authority — primary */
+  --ss-periwinkle:     #8E9FEE;   /* Lavender Insight */
+  --ss-sky:            #8CC6FF;   /* Sky Awakening */
+  --ss-indigo-press:   #2D2A52;   /* pressed / deepest brand */
+
+  /* ---- Surfaces · Light ---- */
+  --ss-cream:          #FAF8F5;   /* Parchment Canvas — default page bg */
+  --ss-warm-veil:      #F1EFEC;   /* Warm Veil — alt section bg */
+  --ss-white:          #FFFFFF;   /* card fill only, never page bg */
+  --ss-lavender:       #E1E4F6;   /* Mist Lavender — badge / tint fill */
+
+  /* ---- Surfaces · Dark ---- */
+  --ss-ink:            #0C0B14;   /* Deep Indigo Void — dark page bg */
+  --ss-elevated:       #15131F;   /* Elevated Void */
+  --ss-surface-indigo: #1F1B2E;   /* Surface Indigo */
+
+  /* ---- Text · on light ---- */
+  --text-primary:      #0C0B14;
+  --text-body:         rgba(12, 11, 20, 0.78);
+  --text-secondary:    rgba(12, 11, 20, 0.62);
+  --text-tertiary:     rgba(12, 11, 20, 0.58);  /* meets WCAG AA */
+  --text-muted:        rgba(12, 11, 20, 0.32);  /* decoration / non-text only */
+
+  /* ---- Text · on dark ---- */
+  --text-primary-dark:   #FAF8F5;
+  --text-body-dark:      rgba(250, 248, 245, 0.82);
+  --text-secondary-dark: rgba(250, 248, 245, 0.66);
+  --text-tertiary-dark:  rgba(250, 248, 245, 0.60);  /* meets WCAG AA */
+  --text-muted-dark:     rgba(250, 248, 245, 0.32);  /* decoration only */
+
+  /* ---- Borders ---- */
+  --line-whisper:      rgba(60, 57, 110, 0.10);
+  --line-default:      rgba(60, 57, 110, 0.18);
+  --line-whisper-dark: rgba(225, 228, 246, 0.08);
+  --line-default-dark: rgba(225, 228, 246, 0.14);
+  --line-active:       #8E9FEE;
+
+  /* ---- Status (desaturated, brand-aligned) ---- */
+  --status-success: #5C8B7A;
+  --status-error:   #9B4444;
+  --status-warning: #9B7C44;
+  --status-info:    #8CC6FF;
+
+  /* ---- Semantic aliases ---- */
+  --surface-page:    var(--ss-cream);
+  --surface-veil:    var(--ss-warm-veil);
+  --surface-card:    var(--ss-white);
+  --surface-void:    var(--ss-ink);
+  --brand:           var(--ss-indigo);
+  --brand-soft:      var(--ss-periwinkle);
+  --accent-sky:      var(--ss-sky);
+}
+
+/* ===== _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/typography.css ===== */
+/* =========================================================================
+   Soulstory · Typography
+   Two voices, one document. Mr Eaves (sans) carries strategic clarity;
+   Minion 3 (serif italic) carries soulful editorial weight. Never substitute.
+   ========================================================================= */
+
+:root {
+  /* ---- Families ---- */
+  --font-sans:  'mr-eaves-sans', 'Mr Eaves Sans OT', 'Avenir Next', 'Avenir', 'Helvetica Neue', system-ui, Arial, sans-serif;
+  --font-serif: 'minion-3', 'Minion 3 Pro', 'Minion Pro', Garamond, Georgia, serif;
+  --font-mono:  'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  /* ---- Tracking ---- */
+  --tracking-tight:  -0.02em;
+  --tracking-normal: 0em;
+  --tracking-wide:   0.06em;
+  --tracking-wider:  0.12em;
+}
+
+/* ---------- Type utility classes (the canonical hierarchy) ---------- */
+.t-display-hero  { font-family: var(--font-sans); font-size: 72px; font-weight: 400; line-height: 1.05; letter-spacing: -1.8px; }
+.t-display-large { font-family: var(--font-sans); font-size: 56px; font-weight: 400; line-height: 1.08; letter-spacing: -1.4px; }
+.t-display       { font-family: var(--font-sans); font-size: 44px; font-weight: 500; line-height: 1.12; letter-spacing: -1.0px; }
+.t-h1            { font-family: var(--font-sans); font-size: 36px; font-weight: 500; line-height: 1.18; letter-spacing: -0.6px; }
+.t-h2            { font-family: var(--font-sans); font-size: 28px; font-weight: 500; line-height: 1.25; letter-spacing: -0.4px; }
+.t-h3            { font-family: var(--font-sans); font-size: 22px; font-weight: 500; line-height: 1.30; letter-spacing: -0.2px; }
+.t-h4            { font-family: var(--font-sans); font-size: 18px; font-weight: 500; line-height: 1.35; }
+
+.t-tagline         { font-family: var(--font-serif); font-style: italic; font-size: 14px; font-weight: 400; line-height: 1.45; letter-spacing: 0.2px; }
+.t-attribution     { font-family: var(--font-serif); font-style: italic; font-size: 14px; font-weight: 400; line-height: 1.45; }
+.t-pull-quote      { font-family: var(--font-serif); font-size: 28px; font-weight: 400; line-height: 1.30; }
+.t-pull-quote-sans { font-family: var(--font-sans); font-size: 32px; font-weight: 400; line-height: 1.20; letter-spacing: -0.4px; }
+.t-editorial       { font-family: var(--font-serif); font-size: 17px; font-weight: 400; line-height: 1.70; }
+
+.t-body-large    { font-family: var(--font-sans); font-size: 18px; font-weight: 400; line-height: 1.65; }
+.t-body          { font-family: var(--font-sans); font-size: 16px; font-weight: 400; line-height: 1.60; }
+.t-body-medium   { font-family: var(--font-sans); font-size: 16px; font-weight: 500; line-height: 1.50; }
+.t-body-small    { font-family: var(--font-sans); font-size: 15px; font-weight: 400; line-height: 1.55; }
+
+.t-caption       { font-family: var(--font-sans); font-size: 14px; font-weight: 400; line-height: 1.50; }
+.t-label         { font-family: var(--font-sans); font-size: 13px; font-weight: 500; line-height: 1.40; letter-spacing: 0.1px; }
+.t-button        { font-family: var(--font-sans); font-size: 15px; font-weight: 500; line-height: 1.00; }
+.t-overline      { font-family: var(--font-sans); font-size: 11px; font-weight: 500; line-height: 1.40; letter-spacing: 0.6px; text-transform: uppercase; }
+.t-micro         { font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 1.40; letter-spacing: 0.1px; }
+
+/* ===== _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/spacing.css ===== */
+/* =========================================================================
+   Soulstory · Spacing, Radius & Elevation
+   8px base scale · almost-square corners (stops at 32px) · indigo-tinted shadows
+   ========================================================================= */
+
+:root {
+  /* ---- Spacing (8px base) ---- */
+  --sp-1:  4px;
+  --sp-2:  8px;
+  --sp-3:  12px;
+  --sp-4:  16px;
+  --sp-5:  20px;
+  --sp-6:  24px;
+  --sp-7:  32px;
+  --sp-8:  40px;
+  --sp-9:  48px;
+  --sp-10: 64px;
+  --sp-11: 80px;
+  --sp-12: 96px;
+  --sp-13: 128px;
+  --sp-14: 160px;
+
+  /* ---- Radius (almost-square — scale stops at 32px) ---- */
+  --r-xs:    4px;   /* sharp */
+  --r-sm:    6px;   /* subtle — badges */
+  --r-md:    10px;  /* buttons, inputs */
+  --r-lg:    12px;  /* cards */
+  --r-xl:    16px;  /* featured cards */
+  --r-2xl:   20px;
+  --r-3xl:   24px;
+  --r-4xl:   32px;  /* heroes — top of scale */
+
+  /* ---- Elevation · indigo-tinted (never neutral gray) ---- */
+  --shadow-1: 0 1px 2px rgba(60, 57, 110, 0.06);
+  --shadow-2: 0 4px 12px rgba(60, 57, 110, 0.08), 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-3: 0 16px 32px rgba(60, 57, 110, 0.10), 0 4px 8px rgba(0,0,0,0.04);
+  --shadow-soft-indigo:
+    rgba(60, 57, 110, 0.04) 0px 4px 18px,
+    rgba(60, 57, 110, 0.027) 0px 2px 7.85px,
+    rgba(60, 57, 110, 0.02) 0px 0.8px 2.93px;
+  --shadow-elevated:
+    rgba(60, 57, 110, 0.08) 0px 14px 28px,
+    rgba(60, 57, 110, 0.05) 0px 23px 52px,
+    rgba(0, 0, 0, 0.04) 0px 7px 15px;
+  --shadow-floating:
+    rgba(60, 57, 110, 0.16) 0px 30px 60px -12px,
+    rgba(60, 57, 110, 0.10) 0px 18px 36px -18px,
+    rgba(0, 0, 0, 0.04) 0px 8px 17px;
+  --shadow-ring-hover: 0 0 0 1px rgba(60, 57, 110, 0.18);
+  --shadow-ring-focus: 0 0 0 3px rgba(142, 159, 238, 0.20);
+
+  /* ---- Layout ---- */
+  --container-max: 1200px;
+}
+
+/* ===== _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/motion.css ===== */
+/* =========================================================================
+   Soulstory · Motion
+   Calm, intentional. Fades and gentle lifts — never bounce.
+   ========================================================================= */
+
+:root {
+  --dur-fast: 160ms;  /* @kind other */
+  --dur-base: 280ms;  /* @kind other */
+  --dur-slow: 520ms;  /* @kind other */
+  --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);  /* @kind other */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);  /* @kind other */
+}
+
+/* ---------- A11y · reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ===== _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/base.css ===== */
+/* =========================================================================
+   Soulstory · Base
+   Native-feeling element resets. Parchment canvas, humanist sans, AA focus.
+   ========================================================================= */
+
+html, body {
+  background: var(--ss-cream);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---------- A11y · keyboard focus ring (brand periwinkle) ---------- */
+:focus { outline: none; }
+.btn:focus-visible,
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+summary:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-ring-focus);
+  border-radius: var(--r-sm);
+}
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  border-color: var(--line-active);
+  box-shadow: var(--shadow-ring-focus);
+}
+
+/* ===== _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/styles.css ===== */
+/* =========================================================================
+   Soulstory Design System 2.0 — global entry point
+   Editorial-mystical brand system · Parchment ↔ Void
+   Consumers link THIS file only. Imports below reach every token + font-face.
+   ========================================================================= */
+</style>
+<!-- estilos-base:fim -->
 <style></style>
 <style>html,body{height:100%;margin:0}#dc-root,#dc-root>.sc-host{height:100%}</style>
 <style>
@@ -498,7 +797,275 @@
 @keyframes rtxLeave { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-125%); opacity: 0; } }
 @keyframes rtxIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes rtxOut { from { opacity: 1; } to { opacity: 0; } }</style>
-<link rel="stylesheet" href="estilos-ajustes.css">
+<!-- estilos-ajustes:inicio -->
+<style>
+/* =========================================================================
+   Soulstory · ajustes de estado e responsividade
+   ARQUIVO GERADO. Não edite aqui: mexa nos arquivos de origem e rode
+   python3 construir-estilos.py para refazer.
+   Origem:
+     estados.css
+     responsivo.css
+   ========================================================================= */
+
+/* ===== estados.css ===== */
+/* =========================================================================
+   Soulstory · estados de hover e de foco
+   O runtime de origem aplicava esses estados por conta própria (atributos
+   style-hover e style-focus) e os perdemos ao tornar a página independente.
+   Aqui eles voltam como CSS de verdade.
+
+   As regras usam !important porque o export deixou todos os estilos embutidos
+   no atributo style de cada elemento, e estilo embutido vence folha de estilo.
+   Os valores vêm dos tokens do design system, nunca de hex solto.
+   ========================================================================= */
+
+/* ---------- Hover (só onde existe ponteiro de verdade) ---------- */
+@media (hover: hover) {
+
+  /* Aba TRAMA, no topo da página */
+  a[href="#trama"]:hover {
+    box-shadow: var(--shadow-elevated) !important;
+    border-color: var(--line-active) !important;
+  }
+
+  /* Pílula "clique aqui e descubra", nos cards Motivo 1 e Motivo 2 */
+  .scp1:hover {
+    background: var(--ss-indigo-press) !important;
+  }
+
+  /* Botões de anterior e próximo do deck de depoimentos */
+  .scp4:hover {
+    background: color-mix(in srgb, var(--ss-periwinkle) 18%, transparent) !important;
+    border-color: color-mix(in srgb, var(--ss-periwinkle) 85%, transparent) !important;
+    transform: translateY(-2px) !important;
+  }
+
+  /* Modal do Raio-X: botão de fechar */
+  [data-modal-raiox] button[aria-label="Fechar"]:hover {
+    background: color-mix(in srgb, var(--ss-cream) 14%, transparent) !important;
+  }
+
+  /* Modal do Raio-X: voltar uma pergunta */
+  [data-modal-raiox] button[data-acao="voltar"]:hover {
+    color: var(--ss-cream) !important;
+  }
+
+  /* Modal do Raio-X: avançar ou enviar */
+  [data-modal-raiox] button[data-acao="avancar"]:hover {
+    transform: translateY(-2px) !important;
+  }
+}
+
+/* ---------- Foco de teclado ----------
+   As quatro réguas de estatística têm tabindex e recebiam contorno ao focar.
+   Usamos :focus-visible, que mostra o contorno para quem navega por teclado
+   sem sujar o clique de mouse. */
+.scp2:focus-visible {
+  outline: 2px solid var(--ss-indigo) !important;
+  outline-offset: 3px !important;
+}
+
+.scp3:focus-visible {
+  outline: 2px solid var(--ss-periwinkle) !important;
+  outline-offset: 3px !important;
+}
+
+/* ===== responsivo.css ===== */
+/* =========================================================================
+   Soulstory · ajustes de responsividade e de toque
+
+   1) Transbordo horizontal
+   Algumas camadas decorativas (o brilho de borda dos cards e o canvas da borda
+   elétrica) são desenhadas propositalmente para fora do elemento, para o brilho
+   escapar das bordas. No desktop sobra espaço e ninguém percebe. No celular elas
+   empurravam a página para os lados: a tela tinha 375px de largura e o conteúdo
+   pedia 425px, então dava para arrastar a página na horizontal, o que atrapalha
+   a leitura e a rolagem. Esse defeito já existia no export original.
+
+   A correção recorta o excesso no contêiner principal da página. Como o excesso
+   é só brilho decorativo, nada de conteúdo se perde. Usamos "clip" e deixamos
+   "hidden" antes, como reserva para navegadores mais antigos.
+
+   2) Alvos de toque
+   As bolinhas do carrossel da história tinham 9px, pequenas demais para o dedo.
+   A área clicável cresce para 44px sem mudar o tamanho do desenho.
+   ========================================================================= */
+
+/* ---------- 1. Recorte do excesso decorativo ---------- */
+#dc-root {
+  overflow-x: hidden;
+  overflow-x: clip;
+}
+
+/* ---------- 2. Bolinhas do carrossel com área de toque maior ----------
+   As bolinhas têm 9px de diâmetro, pequenas demais para o dedo. A área clicável
+   cresce sem mudar o desenho.
+
+   Atenção ao espaçamento: a primeira tentativa usou 44px de largura e as áreas
+   de bolinhas vizinhas passaram a se sobrepor, então tocar numa acionava a outra.
+   Por isso o intervalo entre elas também aumentou: agora são 33px de centro a
+   centro para 32px de área, o que garante que cada toque atinja só uma. */
+.sstk-dots {
+  gap: 24px;
+}
+
+.sstk-dot {
+  position: relative;
+}
+
+.sstk-dot::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 32px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+  /* só amplia a área de toque, não aparece na tela */
+}
+
+/* No dedo, 32px de largura ainda ficam abaixo do piso de 44px que a Apple e o
+   Material pedem. A conta é a mesma de antes: a área não pode passar do espaço
+   entre uma bolinha e a vizinha, senão o toque acerta a errada. Com 40px de
+   respiro, o passo de centro a centro vira 49px e os 44px cabem com folga.
+   Só vale onde o ponteiro é grosso: no mouse, 32px já bastam e o desenho da
+   régua continua compacto como está hoje. */
+@media (pointer: coarse) {
+  .sstk-dots {
+    gap: var(--sp-8);
+  }
+
+  .sstk-dot::after {
+    width: 44px;
+  }
+}
+
+/* ---------- 2b. Alvos de toque dos links do rodapé ----------
+   Os três links do rodapé têm 14px de fonte, o que dá uma linha de 17px de
+   altura: menos da metade do piso de 44px. Aumentar o padding resolveria o
+   toque, mas empurraria o rodapé inteiro para baixo, então a área cresce por
+   pseudo-elemento, invisível, exatamente como nas bolinhas.
+
+   No dedo, a fileira quebra em duas linhas e as áreas de toque de uma linha
+   chegariam a encostar na outra (13,5px de sobra para cada lado contra 24px de
+   intervalo). Por isso o intervalo sobe para 32px quando o ponteiro é grosso. */
+.rodape-link {
+  position: relative;
+}
+
+.rodape-link::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 44px;
+  transform: translateY(-50%);
+  /* só amplia a área de toque, não aparece na tela */
+}
+
+@media (pointer: coarse) {
+  .rodape-links {
+    gap: var(--sp-7);
+  }
+}
+
+/* ---------- 3. Borda elétrica: estática no celular ----------
+   No desktop o contorno do card do Raio-X é desenhado quadro a quadro num canvas,
+   deslocado por ruído, e cercado por três camadas de brilho borrado. É bonito e
+   custa caro: cerca de 30 mil contas por quadro, 60 vezes por segundo, num
+   aparelho que já tem menos fôlego e bateria contada.
+
+   No celular a mesma ideia vira uma hairline periwinkle parada. Some o canvas,
+   somem os dois brilhos borrados e some o eb-background-glow, que era o único
+   gradiente que ainda restava nesta página. No lugar entra um anel de 1px em
+   var(--brand-soft), desenhado como sombra no contêiner para não disputar com a
+   borda que o card já traz no atributo style (estilo inline só perde para
+   !important, e não vale sujar o CSS por causa disso).
+
+   O limite de 700px é o mesmo que o hero já usa para trocar a imagem de fundo,
+   então "celular" quer dizer a mesma coisa nos dois lugares.
+
+   O borda-eletrica.js tem a trava correspondente: abaixo de 700px ele nem liga a
+   animação, senão o processador continuaria desenhando um canvas escondido. */
+@media (max-width: 700px) {
+  .electric-border .eb-canvas-container,
+  .electric-border .eb-layers {
+    display: none;
+  }
+
+  .electric-border {
+    box-shadow: 0 0 0 1px var(--brand-soft);
+  }
+}
+
+/* ---------- 4. Meio-tom: fora do celular ----------
+   A arte da citação é um shader WebGL que revela a frase debaixo do cursor. No
+   celular não existe cursor: a arte ficava parada em meio-tom, com a frase
+   serrilhada e ilegível, depois de baixar 130KB da biblioteca OGL só para isso.
+   Medido na arte exibida com os 343px de largura que o celular tem: a overline
+   caía para 3,4px de altura e a assinatura para 6,5px.
+
+   Então no celular a arte sai inteira, e com ela as duas linhas que só existiam
+   para pedir o gesto (o convite "passe o cursor" e a instrução embaixo). A
+   seção fica com a overline e o título, que é o que sustenta a ideia sem
+   depender de interação. O desktop segue exatamente como estava.
+
+   O meio-tom.js tem a trava correspondente: abaixo de 700px ele não busca a OGL
+   nem monta o WebGL. */
+@media (max-width: 700px) {
+  [data-meio-tom-caixa],
+  [data-meio-tom-convite],
+  [data-meio-tom-instrucao] {
+    display: none;
+  }
+}
+
+/* ---------- 5. Assinatura do cabeçalho em tela estreita ----------
+   A assinatura do cabeçalho subiu de 10px e 7px para 12px e 11px, porque sete
+   pixels não se lê. Na largura de celular, porém, "UM PROGRAMA SOULSTORY" com
+   0,22em de espaçamento não cabe mais numa linha e quebra em duas, o que deixa
+   o bloco desequilibrado ao lado do logótipo.
+
+   Abaixo de 480px as duas linhas recuam para 10px e 9px, o maior par que ainda
+   cabe numa linha só. Mesmo assim a segunda linha continua maior do que os 7px
+   de antes. O !important é necessário porque o export deixou o tamanho no
+   atributo style de cada elemento, e estilo embutido vence folha de estilo. */
+@media (max-width: 480px) {
+  [data-dc-tpl="54"] { font-size: 10px !important; }
+  [data-dc-tpl="57"] { font-size: 9px !important; }
+}
+
+/* ---------- 6. Pílula do hero já nasce quebrada no celular ----------
+   A pílula do texto rotativo vem do HTML com white-space: nowrap, e é o
+   JavaScript que, ao medir que a frase mais longa não cabe, a reconfigura em
+   três linhas. Na primeira pintura da página, porém, o script ainda não rodou:
+   a pílula aparece numa linha só e, um instante depois, cresce para três,
+   empurrando o título, o parágrafo e os botões para baixo. O PageSpeed media
+   esse salto como CLS de 0,10, o limite exato do "ruim".
+
+   Abaixo de 700px a pílula já nasce com quebra de linha, no mesmo estado em
+   que o script vai deixá-la. Quando ele roda, nada se move. O !important é
+   necessário porque o valor original está no atributo style do elemento. */
+@media (max-width: 699px) {
+  [data-texto-rotativo] {
+    white-space: normal !important;
+  }
+
+  /* A camada de texto que vem no HTML (marcada com data-rt-inicial) também
+     precisa quebrar e ocupar a largura toda, centralizada, que é exatamente a
+     geometria que o script monta depois. O script descarta essa camada ao
+     assumir, então a regra não alcança as camadas que ele cria. */
+  [data-texto-rotativo] [data-rt-inicial] {
+    white-space: normal !important;
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+}
+</style>
+<!-- estilos-ajustes:fim -->
 </head>
 <body>
 <div id="dc-root"><div class="sc-host" data-sc-name="index"><div data-dc-tpl="14" class="hero-progress" aria-hidden="true" style="position: fixed; top: 0px; left: 0px; right: 0px; height: 40px; z-index: 70; pointer-events: none; opacity: 0; transition: opacity 0.45s; background: linear-gradient(rgba(250, 248, 245, 0.96), rgba(250, 248, 245, 0.86)); backdrop-filter: blur(6px); border-bottom: 1px solid rgba(60, 57, 110, 0.12); --p: 0.0000;">

@@ -11,6 +11,15 @@ Gera:
   estilos-base.css     as fontes, os tokens e o estilo do design system
   estilos-ajustes.css  os nossos ajustes de estado e de responsividade
 
+E embute os dois no <head> do index.html, cada um entre os seus marcadores
+(<!-- estilos-base:inicio/fim --> e <!-- estilos-ajustes:inicio/fim -->). Por quê: no celular,
+cada folha de estilo é uma requisição que bloqueia a primeira pintura. O
+PageSpeed mediu 640ms só nas duas (170ms na base e 470ms na de ajustes, que
+ficava no meio do <body> e era descoberta tarde). Embutidas, custam zero
+requisições: chegam no mesmo pacote do HTML, uns 5KB a mais comprimidos.
+Os arquivos .css continuam sendo gerados para a página de política de
+privacidade e para consulta.
+
 IMPORTANTE: estes dois arquivos são GERADOS. Se você mexer em algum CSS de
 origem (dentro de _ds/, em estados.css ou em responsivo.css), rode este script
 de novo:  python3 construir-estilos.py
@@ -105,3 +114,26 @@ for arquivos, saida, titulo in [
         f.write(conteudo)
     origem = sum(os.path.getsize(os.path.join(RAIZ, a)) for a in arquivos)
     print(f"{saida}: {len(arquivos)} arquivos, {origem/1024:.1f}KB -> {os.path.getsize(destino)/1024:.1f}KB")
+
+
+# ---------- Embute os dois CSS no <head> do index.html ----------
+# Cada um entra exatamente onde o seu <link> ficava: a base perto do topo do
+# <head>, e os ajustes no FIM do <head>, depois dos blocos <style> que o export
+# deixou lá. A ordem importa: os ajustes precisam vencer esses blocos no
+# desempate da cascata (a régua de bolinhas, por exemplo, tem gap definido nos
+# dois lugares), e só vencem se vierem depois.
+caminho_index = os.path.join(RAIZ, "index.html")
+with open(caminho_index, encoding="utf-8") as f:
+    html = f.read()
+for saida, nome in (("estilos-base.css", "estilos-base"), ("estilos-ajustes.css", "estilos-ajustes")):
+    INICIO, FIM = f"<!-- {nome}:inicio -->", f"<!-- {nome}:fim -->"
+    a, b = html.find(INICIO), html.find(FIM)
+    if a == -1 or b == -1 or b < a:
+        print(f"index.html: marcadores {INICIO} / {FIM} não encontrados, nada embutido")
+        continue
+    with open(os.path.join(RAIZ, saida), encoding="utf-8") as f:
+        css = f.read().rstrip("\n") + "\n"
+    html = html[:a] + INICIO + "\n<style>\n" + css + "</style>\n" + FIM + html[b + len(FIM):]
+    print(f"index.html: {saida} embutido ({len(css)/1024:.1f}KB)")
+with open(caminho_index, "w", encoding="utf-8") as f:
+    f.write(html)
