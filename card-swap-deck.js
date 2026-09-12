@@ -15,7 +15,7 @@
     { name: 'Igor Gonçalves', followers: '747 mil seguidores', num: 'R$ 48,3 milhões faturados.', copy: 'Cinco lançamentos de sete dígitos, dois de oito, movidos por uma só narrativa: os Inconformados.' },
     { name: 'Camila Vieira', followers: '4,4 mi seguidores', num: 'Do zero a múltiplos 8 dígitos em 11 meses.', copy: 'Ela leu a própria copy e perguntou se não tinha sido ela quem escreveu.' },
     { name: 'Patrícia Domingos', followers: '40,9 mil seguidores', num: '198 mil euros em 9 meses, no tráfego orgânico.', copy: 'Tudo isso sem um euro em anúncio.' },
-    { name: '49 educação', followers: '27,3 mil seguidores', num: 'R$ 1,2 milhão no primeiro ano de operação.', copy: 'Empresa no primeiro ano, seis pessoas no time, e o caixa já cruza os sete dígitos.' },
+    { name: '49 educação', followers: '27,3 mil seguidores', num: 'R$ 1,2 milhão no primeiro ano de operação.', copy: 'Empresa no primeiro ano, seis pessoas no time, e o caixa já cruza os sete dígitos.', selo: 'Prêmio de Marketing e Vendas ADVB' },
     { name: 'Spencer', followers: '2 mi seguidores', num: 'De 629 para 2.187 alunos em 8 meses.', copy: 'Oito meses, e a história começou a encher a escola de aluno novo.' },
     { name: 'Codirect', followers: '227 mil seguidores', num: 'Ticket de R$ 3.600 para R$ 19.800 em menos de 12 meses.', copy: 'Em dois anos, o mês de R$ 260 mil virou mês de R$ 770 mil.' }
   ];
@@ -74,7 +74,14 @@
       var textos = blocoTexto.querySelectorAll('.sc-interp');
       var contadores = linhaBotoes.querySelectorAll('.sc-interp');
       if (textos.length >= 3 && contadores.length >= 1) {
-        painel = { num: textos[0], copy: textos[1], attr: textos[2], indice: contadores[0] };
+        painel = {
+          num: textos[0],
+          copy: textos[1],
+          attr: textos[2],
+          indice: contadores[0],
+          selo: blocoTexto.querySelector('.ss-selo-premio'),
+          seloTexto: blocoTexto.querySelector('.ss-selo-premio-texto')
+        };
       }
     }
   }
@@ -86,6 +93,17 @@
     painel.copy.textContent = c.copy || '';
     painel.attr.textContent = (c.name || '') + (c.followers ? ' · ' + c.followers : '');
     painel.indice.textContent = String(i + 1).padStart(2, '0');
+    // A pílula de prêmio só aparece nos clientes que têm um selo declarado.
+    if (painel.selo) {
+      if (c.selo) {
+        if (painel.seloTexto) painel.seloTexto.textContent = c.selo;
+        painel.selo.hidden = false;
+        painel.selo.style.display = 'inline-flex';
+      } else {
+        painel.selo.hidden = true;
+        painel.selo.style.display = 'none';
+      }
+    }
   }
 
   function anunciar(i) {
