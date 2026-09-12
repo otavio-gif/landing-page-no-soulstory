@@ -2,7 +2,8 @@
 // O herói caminha da esquerda para a direita conforme a leitura avança, até
 // alcançar a princesa quando o botão de agendamento entra na tela. O dragão
 // para de soltar fogo e tomba, e faíscas aparecem.
-// A barra só se mostra depois que a aba TRAMA sai da tela.
+// A barra só se mostra depois que a leitura começa, para não competir com o
+// topo da página.
 (function () {
   'use strict';
 
@@ -42,7 +43,7 @@
   // ---------- Estado ----------
   var venceu = false, recuando = false, andando = false, quadro = 0;
   var ultimaRolagem = 0;
-  var alvo = null, abaTrama = null;
+  var alvo = null;
   var faiscas = [];
 
   function criarFaiscas() {
@@ -75,7 +76,6 @@
     var vh = window.innerHeight || 1;
 
     if (!alvo || !alvo.isConnected) alvo = document.querySelector('[data-hp-goal]');
-    if (!abaTrama || !abaTrama.isConnected) abaTrama = document.querySelector('[data-screen-label="Aba de programa"]');
 
     var avanco = 0, ganhou = false, recuo = false;
     if (alvo && alvo.getBoundingClientRect().height > 0) {
@@ -93,7 +93,10 @@
       }
     }
 
-    var mostrar = abaTrama ? abaTrama.getBoundingClientRect().bottom < 0 : true;
+    // A barra aparece quando a leitura comeca. O gatilho antigo era a aba TRAMA
+    // sair da tela; com a aba fora da pagina, quem marca esse momento e a
+    // propria rolagem. A zona morta curta evita a barra piscar parada no topo.
+    var mostrar = sy > 16;
     barra.style.setProperty('--p', avanco.toFixed(4));
     barra.style.opacity = mostrar ? '1' : '0';
 
