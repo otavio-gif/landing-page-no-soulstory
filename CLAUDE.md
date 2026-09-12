@@ -29,6 +29,8 @@ A fonte da verdade visual é a pasta `_ds/` (o Soulstory Design System 2.0). Tod
 - **Explique o porquê antes do como.** Antes de mexer, diga o raciocínio em português simples. Decoreba não constrói nada.
 - **Uma mudança de cada vez.** Termine uma coisa, verifique, e só então parta para a próxima. Nunca empilhe várias mudanças de uma vez, porque quando algo quebra fica impossível saber qual delas foi a culpada.
 - **Verificação visual é obrigatória.** Toda alteração de layout passa por screenshot do Playwright antes e depois, em pelo menos duas larguras: 375px (celular) e 1440px (desktop). Opcionalmente 1280px como intermediário. Nunca declare uma tarefa concluída sem ter olhado o screenshot com os próprios olhos. Mobile primeiro.
+- **Compare a página inteira, não só o trecho que você mexeu.** Screenshot de página completa antes e depois, e diferença pixel a pixel. Foi assim que apareceu uma quebra de cascata de 15px que nenhum olho pegaria. Quando a mudança não deveria alterar nada visualmente, o resultado esperado é "idêntico", e qualquer diferença é para investigar, não para aceitar.
+- **Mexeu em desempenho, meça com Lighthouse.** Rode local servindo com gzip (o Cloudflare comprime), em modo celular, duas ou três vezes, porque o TBT oscila. E confira no PageSpeed real depois do push: o ambiente local não carrega o Typekit, então a diferença entre os dois números é informação, não erro.
 - **Skills, uma de cada vez.** Aplique uma skill, tire o screenshot antes e depois, confira, e só então a próxima. Nunca rode várias skills na mesma passada.
 
 ---
@@ -103,15 +105,78 @@ Nota sobre a assinatura de atribuição: o design system oficial da Soulstory us
 
 ---
 
-## O acabamento deste site (o que ainda falta fazer)
+## Como a página carrega (não desfaça sem medir)
 
-Este site veio de um export do Claude Design e passou por uma faxina de peso, mas ainda não passou pelo acabamento. Pendências:
+Esta seção é o retrato do que já foi feito e por quê. Em setembro de 2026 a nota
+de desempenho do PageSpeed no celular saiu de 64 para 95. Cada item abaixo custou
+medição, então antes de mexer em qualquer um deles, meça antes e depois.
 
-- **Trazer as bibliotecas externas para dentro (vendorizar).** Hoje o site puxa duas bibliotecas de fora via CDN: GSAP (animação de scroll) e OGL (gráfico WebGL). Baixe e sirva localmente, para o site não depender da nuvem de terceiros.
-- **Fontes.** Mr Eaves e Minion 3 são do Adobe Typekit (kit `wnf4ddz`), carregadas via `@import`. JetBrains Mono vem do Google Fonts. Atenção: Adobe Typekit é um serviço licenciado, então mantenha o carregamento via kit oficial e apenas garanta que os fallbacks locais (Avenir, Garamond) funcionam bem. Não tente baixar e hospedar a fonte da Adobe.
-- **Formato do export.** O arquivo principal veio como `.dc.html` (formato do Claude Design). Garanta que a página roda sozinha num navegador comum, sem depender do runtime da ferramenta de origem.
-- **Comprimir mídia.** Imagens: JPEG na qualidade 82, PNG otimizado, largura máxima de 2200px (Pillow). Vídeo, se houver: H.264, CRF 28, sem trilha de áudio (ffmpeg).
-- **Acessibilidade e responsividade como piso, não enfeite.** Foco de teclado visível (o design system já define o anel periwinkle), reduced-motion respeitado, tudo funcionando no celular antes de tudo.
+**Os dois CSS vão embutidos no `<head>` do `index.html`.** O
+`construir-estilos.py` gera `estilos-base.css` e `estilos-ajustes.css` como
+antes, e além disso cola o conteúdo dos dois dentro do HTML, cada um entre os
+seus marcadores: `<!-- estilos-base:inicio/fim -->` perto do topo do `<head>` e
+`<!-- estilos-ajustes:inicio/fim -->` no fim do `<head>`. Nunca junte os dois
+num bloco só: `estilos-ajustes` precisa vir depois dos `<style>` que o export
+deixou no `<head>`, senão perde o desempate da cascata (a régua de bolinhas do
+story stack é o caso que pega). Os arquivos `.css` continuam existindo para a
+página de política de privacidade e para consulta. Fluxo de trabalho não muda:
+mexeu em CSS de origem, rode `python3 construir-estilos.py`.
+
+**O kit da Adobe carrega sem bloquear a pintura.** Está no `<head>` como
+`<link rel="preload" as="style" onload="this.rel='stylesheet'">`, com
+`preconnect` para `use.typekit.net` e `p.typekit.net`, e um `<noscript>` de
+reserva. Não volte para `@import` dentro do CSS: o `@import` só é descoberto
+depois que a folha de estilo inteira chega, e isso custou 1.500ms de bloqueio.
+O `construir-estilos.py` propositalmente deixa o `@import` do kit fora do pacote.
+No painel da Adobe Fonts, o projeto `wnf4ddz` está com exibição da fonte em
+**swap**. Se alguém voltar para `auto`, o texto fica invisível por até 3s.
+
+**As fontes de reserva têm as métricas da marca** (`fontes-reserva.css`). Como o
+kit não bloqueia mais, o texto aparece primeiro numa fonte do aparelho. Para a
+troca não reflowar a página inteira, cada reserva é redimensionada para ocupar
+exatamente o espaço da fonte da marca: Arial (ou Liberation Sans) a 78% no
+regular e 77% no negrito no lugar da Mr Eaves, Roboto para o Android, Times New
+Roman a 100% e 96,5% no itálico no lugar da Minion, todas com `ascent-override`
+e `descent-override` calibrados. Isso derrubou o CLS de 0,167 para perto de zero.
+Os números vieram de medição no site no ar, com as fontes carregadas. Se o kit
+mudar, se entrar um peso novo, ou se a marca trocar de fonte, essa calibração
+precisa ser refeita, não estimada.
+
+**Imagens.** Tudo que está fora da primeira dobra leva `loading="lazy"` e
+`decoding="async"`. Só a foto do hero é ansiosa, com `fetchpriority="high"`. Os
+quatro mockups do Raio-X são servidos em WebP dentro de `<picture>`, com o PNG
+como reserva. Para comprimir daqui para frente: JPEG na qualidade 82, WebP na
+qualidade 82 (62 na foto do hero, que fica atrás de um degradê escuro), PNG
+otimizado, largura máxima de 2200px (Pillow).
+
+**Movimento reduzido é respeitado de ponta a ponta.** Com `prefers-reduced-motion`
+ligado: o shader WebGL do meio-tom para de pedir quadros, os relógios do story
+stack, dos cards de motivo e das réguas não começam, os contadores vão direto ao
+valor final, e a pílula do hero não gira (fica na primeira frase). Nenhum
+conteúdo fica invisível. Se você criar animação nova, siga esse padrão.
+
+**Alvos de toque e contraste.** Os links do rodapé e as bolinhas do story stack
+têm a área de toque ampliada por pseudo-elemento invisível, sem mudar o desenho;
+em ponteiro grosso (`@media (pointer: coarse)`) o respiro entre as bolinhas
+aumenta para a área caber. Todo texto visível passa no piso de contraste da WCAG.
+A pílula do hero usa texto tinta sobre as pílulas claras e creme sobre a indigo.
+
+---
+
+## O que ainda falta fazer
+
+- **Trazer as bibliotecas externas para dentro (vendorizar).** FEITO: GSAP e OGL
+  agora são servidos de `vendor/`. JetBrains Mono saiu do Google Fonts e está em
+  `vendor/fontes/`. Mantenha assim.
+- **Formato do export.** O arquivo principal veio como `.dc.html` (formato do
+  Claude Design). Garanta que a página roda sozinha num navegador comum, sem
+  depender do runtime da ferramenta de origem.
+- **DOM grande.** A página tem cerca de 1.245 elementos, e boa parte disso são
+  centenas de `<rect>` de SVG em pixel art (o herói da barra de progresso, os
+  ícones do modal). Não é urgente, mas é o próximo alvo se a nota cair.
+- **Acessibilidade e responsividade como piso, não enfeite.** Foco de teclado
+  visível (o design system já define o anel periwinkle), reduced-motion
+  respeitado, tudo funcionando no celular antes de tudo.
 
 ---
 
