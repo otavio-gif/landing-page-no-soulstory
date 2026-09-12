@@ -36,6 +36,7 @@ BASE = [
     f"{DS}/tokens/fonts.css",
     f"{DS}/tokens/colors.css",
     f"{DS}/tokens/typography.css",
+    "fontes-reserva.css",   # depois de typography.css: redeclara as pilhas de fonte
     f"{DS}/tokens/spacing.css",
     f"{DS}/tokens/motion.css",
     f"{DS}/tokens/base.css",

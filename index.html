@@ -28,6 +28,7 @@
      _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/fonts.css
      _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/colors.css
      _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/typography.css
+     fontes-reserva.css
      _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/spacing.css
      _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/motion.css
      _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/base.css
@@ -192,6 +193,100 @@
 .t-button        { font-family: var(--font-sans); font-size: 15px; font-weight: 500; line-height: 1.00; }
 .t-overline      { font-family: var(--font-sans); font-size: 11px; font-weight: 500; line-height: 1.40; letter-spacing: 0.6px; text-transform: uppercase; }
 .t-micro         { font-family: var(--font-sans); font-size: 12px; font-weight: 400; line-height: 1.40; letter-spacing: 0.1px; }
+
+/* ===== fontes-reserva.css ===== */
+/* =========================================================================
+   Soulstory · fontes de reserva com as métricas da marca
+
+   O kit da Adobe carrega sem bloquear a pintura, então por um instante o texto
+   aparece numa fonte do aparelho e depois troca para Mr Eaves e Minion. Se a
+   fonte de reserva tiver outra largura, a troca reflui o texto inteiro: linhas
+   quebram em outro lugar, o hero muda de altura, e o PageSpeed mede um CLS de
+   0,167 só por isso.
+
+   Aqui cada fonte de reserva é redimensionada para ocupar exatamente o espaço
+   da fonte da marca: mesma largura de linha, mesma altura de linha, mesma
+   posição da base. A troca acontece sem mover um pixel. Os números vêm de
+   medição direta no site no ar, com as fontes da Adobe carregadas: em 100px,
+   uma frase de 140 caracteres mede 5419,7px em Mr Eaves e 6887,5px em Arial
+   (razão 78,7%); ascendente 0,85 e descendente 0,265 do corpo. Os overrides são
+   divididos pelo size-adjust porque o navegador também escala as métricas.
+
+   Arial e Liberation Sans (Linux, e o próprio PageSpeed) têm as mesmas
+   métricas. Roboto (Android) é um pouco mais estreita, por isso tem a sua
+   própria família. Cada família só entra se a fonte local existir; se não,
+   o navegador segue para a próxima da pilha.
+   ========================================================================= */
+
+/* ---------- Sans: no lugar de Mr Eaves Sans ----------
+   Calibrado com o texto real da página, não só com uma frase de amostra: o
+   fator que menos muda quebras de linha é 78% no regular e 77% no negrito
+   (Mr Eaves negrito tem ascendente 0,865 e a mesma descendente 0,265). */
+@font-face {
+  font-family: 'mr-eaves-reserva';
+  src: local('Arial'), local('ArialMT'), local('Liberation Sans'), local('LiberationSans');
+  font-weight: 100 500;
+  size-adjust: 78%;
+  ascent-override: 109%;
+  descent-override: 34%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'mr-eaves-reserva';
+  src: local('Arial Bold'), local('Arial-BoldMT'), local('Liberation Sans Bold'), local('LiberationSans-Bold');
+  font-weight: 600 900;
+  size-adjust: 77%;
+  ascent-override: 112.3%;
+  descent-override: 34.4%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'mr-eaves-reserva-roboto';
+  src: local('Roboto'), local('Roboto Regular'), local('Roboto-Regular');
+  font-weight: 100 500;
+  size-adjust: 78.4%;
+  ascent-override: 108.4%;
+  descent-override: 33.8%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'mr-eaves-reserva-roboto';
+  src: local('Roboto Bold'), local('Roboto-Bold');
+  font-weight: 600 900;
+  size-adjust: 81.6%;
+  ascent-override: 106%;
+  descent-override: 32.5%;
+  line-gap-override: 0%;
+}
+
+/* ---------- Serif: no lugar de Minion 3 ----------
+   Times New Roman já tem quase a largura da Minion (100%); a itálica da Minion
+   é mais estreita que a da Times (96,5%). Ascendente 1,015 e descendente 0,36. */
+@font-face {
+  font-family: 'minion-reserva';
+  src: local('Times New Roman'), local('TimesNewRomanPSMT'), local('Liberation Serif'), local('LiberationSerif');
+  font-style: normal;
+  size-adjust: 100%;
+  ascent-override: 101.5%;
+  descent-override: 36%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: 'minion-reserva';
+  src: local('Times New Roman Italic'), local('TimesNewRomanPS-ItalicMT'), local('Liberation Serif Italic'), local('LiberationSerif-Italic');
+  font-style: italic;
+  size-adjust: 96.5%;
+  ascent-override: 105.2%;
+  descent-override: 37.3%;
+  line-gap-override: 0%;
+}
+
+/* As pilhas do design system, com as reservas logo depois da fonte da marca.
+   Vem depois de tokens/typography.css no pacote, e por isso vence. */
+:root {
+  --font-sans:  'mr-eaves-sans', 'Mr Eaves Sans OT', 'mr-eaves-reserva', 'mr-eaves-reserva-roboto', 'Avenir Next', 'Avenir', 'Helvetica Neue', system-ui, Arial, sans-serif;
+  --font-serif: 'minion-3', 'Minion 3 Pro', 'minion-reserva', 'Minion Pro', Garamond, Georgia, serif;
+}
 
 /* ===== _ds/soulstory-design-system-5ceab3da-bbf2-4d0c-b870-44e472cf3637/tokens/spacing.css ===== */
 /* =========================================================================
