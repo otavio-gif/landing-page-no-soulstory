@@ -72,9 +72,9 @@
     { key: 'empresa', kind: 'text', input: 'text', label: 'Qual é o nome da sua empresa?', placeholder: 'Nome da empresa', required: true },
     { key: 'site', kind: 'text', input: 'url', label: 'Qual é o site da empresa?', hint: 'Opcional.', placeholder: 'https://', required: false },
     { key: 'instagram', kind: 'text', input: 'text', label: 'Qual é o Instagram da empresa?', hint: 'Opcional.', placeholder: '@perfil', required: false },
-    { key: 'funcao', kind: 'choice', label: 'Qual é a sua função na empresa?', required: true, options: ['Dono(a) do negócio / CEO', 'Alta liderança (C-level)', 'Diretor(a)', 'Gerente', 'Colaborador(a)', 'Freelancer ou consultor(a)', 'Outro', 'Líder de uma equipe de marketing', 'Líder de uma equipe de vendas', 'Dono(a) de agência'] },
-    { key: 'faturamento', kind: 'choice', label: 'Qual é o faturamento anual da empresa?', required: false, options: ['Menos de R$ 300.000', 'Entre R$ 300.001 e R$ 500.000', 'Entre R$ 501.000 e R$ 1.000.000', 'Entre R$ 1.000.001 e R$ 5.000.000', 'Acima de R$ 5.000.000'] },
-    { key: 'investir', kind: 'choice', label: 'Você pretende investir em marketing, vendas, site ou growth nos próximos 3 a 6 meses?', required: false, options: ['Sim, já tenho orçamento disponível', 'Sim, mas ainda não tenho orçamento disponível', 'Talvez mais tarde', 'No momento não'] },
+    { key: 'funcao', kind: 'choice', avancoAuto: true, label: 'Qual é a sua função na empresa?', required: true, options: ['Dono(a) do negócio / CEO', 'Diretor(a)', 'Gerente', 'Colaborador(a)', 'Freelancer ou consultor(a)', 'Outro'] },
+    { key: 'faturamento', kind: 'choice', avancoAuto: true, label: 'Qual é o faturamento anual da empresa?', required: false, options: ['Menos de R$ 300.000', 'Entre R$ 300.001 e R$ 500.000', 'Entre R$ 501.000 e R$ 1.000.000', 'Entre R$ 1.000.001 e R$ 5.000.000', 'Acima de R$ 5.000.000'] },
+    { key: 'investir', kind: 'choice', avancoAuto: true, label: 'Você pretende investir em marketing, vendas, site ou growth nos próximos 3 a 6 meses?', required: false, options: ['Sim, já tenho orçamento disponível', 'Sim, mas ainda não tenho orçamento disponível', 'Talvez mais tarde', 'No momento não'] },
     { key: 'ajuda', kind: 'textarea', label: 'Como você acredita que a Soulstory pode te ajudar?', hint: 'Conte com as suas palavras.', placeholder: 'Escreva aqui...', required: false }
   ];
 
@@ -103,6 +103,7 @@
   var estado = { aberto: false, passo: 0, enviado: false, enviando: false, id: '', form: {} };
   PERGUNTAS.forEach(function (q) { estado.form[q.key] = ''; });
   var filaParcial = Promise.resolve();  // encadeia os envios parciais, um de cada vez
+  var timerAuto = null;       // avanco automatico pendente nas perguntas de escolha
   var raiz = null;            // container fixo do modal
   var botaoOrigem = null;     // quem abriu, para devolver o foco ao fechar
   var jogo = { ligado: false, raf: null, barril: null, proximo: 0, anteriorT: 0, pulou: false };
@@ -324,14 +325,29 @@
     estado.form[q.key] = valor;
     mostrarErro('');
     renderizarPasso();
+    // Nas perguntas de escolha unica, selecionar ja avanca: clicar em Continuar
+    // depois nao acrescenta nada. A pausa curta (mesma duracao media do design
+    // system) deixa a marcacao aparecer antes da tela trocar.
+    if (q.avancoAuto) {
+      cancelarAvancoAuto();
+      timerAuto = setTimeout(function () { timerAuto = null; avancar(); }, 280);
+    }
+  }
+
+  // Cancela o avanco automatico pendente. Chamado em toda navegacao manual,
+  // para um clique rapido em Voltar ou Fechar nao ser atropelado pelo timer.
+  function cancelarAvancoAuto() {
+    if (timerAuto) { clearTimeout(timerAuto); timerAuto = null; }
   }
 
   function irPara(passo) {
+    cancelarAvancoAuto();
     estado.passo = passo;
     renderizarPasso();
   }
 
   function avancar() {
+    cancelarAvancoAuto();
     var q = PERGUNTAS[estado.passo];
     var v = (estado.form[q.key] || '').trim();
     if (q.required && !v) { mostrarErro(q.kind === 'choice' ? 'Selecione uma opção para continuar.' : 'Este campo é obrigatório.'); return; }
@@ -456,6 +472,7 @@
   }
 
   function fechar() {
+    cancelarAvancoAuto();
     pararJogo();
     estado.aberto = false;
     try { document.body.style.overflow = ''; } catch (e) {}
