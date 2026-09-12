@@ -64,11 +64,11 @@
     lista.innerHTML = itens.map(function (item, idx) {
       var aberto = aberta === idx;
       var resposta = aberto
-        ? '<div style="padding:0 24px 22px; font-size:clamp(15.5px, 1.1vw, 18px); line-height:1.66; color:rgba(250,248,245,0.72); text-wrap:pretty">' + escaparHtml(item.a) + '</div>'
+        ? '<div style="padding:0 24px 22px; max-width:65ch; font-size:clamp(15.5px, 1.25vw, 18px); line-height:1.66; color:rgba(250,248,245,0.72); text-wrap:pretty">' + escaparHtml(item.a) + '</div>'
         : '';
       return '<div style="' + estiloCard(aberto) + '">' +
         '<button type="button" data-faq-item="' + idx + '" aria-expanded="' + aberto + '" style="width:100%; display:flex; align-items:center; justify-content:space-between; gap:16px; background:none; border:none; padding:19px 24px; text-align:left; cursor:pointer; font-family:var(--font-sans)">' +
-          '<span style="font-size:clamp(16.5px, 1.15vw, 19px); font-weight:600; color:var(--ss-cream); line-height:1.4; text-wrap:pretty">' + escaparHtml(item.q) + '</span>' +
+          '<span style="font-size:clamp(16.5px, 1.32vw, 19px); font-weight:600; color:var(--ss-cream); line-height:1.4; text-wrap:pretty">' + escaparHtml(item.q) + '</span>' +
           '<span style="' + estiloIcone(aberto) + '">+</span>' +
         '</button>' + resposta + '</div>';
     }).join('');

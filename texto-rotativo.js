@@ -20,6 +20,11 @@
   // Configuração igual à do hero original.
   var TEXTOS = ['vender gastando menos', 'vender mais', 'vender mais caro'];
   var FUNDOS = ['var(--ss-sky)', '#8E9FEE', 'var(--ss-indigo)'];
+  // A cor do texto acompanha a claridade da pílula. Creme sobre a sky dava 1,70
+  // de contraste e sobre a lavanda 2,37, abaixo do piso de 3 para texto grande.
+  // Com tinta nas duas claras a conta vira 10,4 e 7,4, e a indigo, que já
+  // passava com folga, continua com creme.
+  var FRENTES = ['var(--ss-ink)', 'var(--ss-ink)', 'var(--ss-cream)'];
   var INTERVALO = 2200;
   var DUR = 0.55;
   var PASSO = 0.03; // atraso entre uma letra e a seguinte
@@ -159,6 +164,7 @@
 
     leitor.textContent = TEXTOS[atual];
     raiz.style.backgroundColor = FUNDOS[atual];
+    raiz.style.color = FRENTES[atual];
 
     var entrando = montarCamada(TEXTOS[atual], 'entra', false, estreito);
     var saindo = montarCamada(TEXTOS[anterior], 'sai', true, estreito);
@@ -185,6 +191,7 @@
     atual = 0;
     leitor.textContent = TEXTOS[0];
     raiz.style.backgroundColor = FUNDOS[0];
+    raiz.style.color = FRENTES[0];
     if (estreito) {
       // A frase mais longa não cabe numa linha. Em vez de congelar numa frase só,
       // a pílula vira um retângulo de tamanho fixo (a largura disponível, a altura
@@ -215,6 +222,15 @@
       raiz.style.transition = 'width ' + DUR + 's ' + CURVA + ', background-color ' + DUR + 's ' + CURVA;
     });
     pararRelogio();
+
+    // Com movimento reduzido a pílula não gira: fica parada na primeira frase.
+    // Só amaciar a troca não bastava. Trocar de frase a cada 2,2 segundos é
+    // conteúdo que se atualiza sozinho para sempre, e o corte seco incomoda
+    // quem pediu menos movimento tanto quanto a animação incomodava. As outras
+    // frases não se perdem: a seção "O que acontece nas 4 semanas" lista as
+    // quatro por extenso, e o leitor de tela continua anunciando esta.
+    if (movimentoReduzido) return;
+
     relogio = setInterval(avancar, INTERVALO);
   }
 

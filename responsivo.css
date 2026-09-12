@@ -51,6 +51,52 @@
   /* só amplia a área de toque, não aparece na tela */
 }
 
+/* No dedo, 32px de largura ainda ficam abaixo do piso de 44px que a Apple e o
+   Material pedem. A conta é a mesma de antes: a área não pode passar do espaço
+   entre uma bolinha e a vizinha, senão o toque acerta a errada. Com 40px de
+   respiro, o passo de centro a centro vira 49px e os 44px cabem com folga.
+   Só vale onde o ponteiro é grosso: no mouse, 32px já bastam e o desenho da
+   régua continua compacto como está hoje. */
+@media (pointer: coarse) {
+  .sstk-dots {
+    gap: var(--sp-8);
+  }
+
+  .sstk-dot::after {
+    width: 44px;
+  }
+}
+
+/* ---------- 2b. Alvos de toque dos links do rodapé ----------
+   Os três links do rodapé têm 14px de fonte, o que dá uma linha de 17px de
+   altura: menos da metade do piso de 44px. Aumentar o padding resolveria o
+   toque, mas empurraria o rodapé inteiro para baixo, então a área cresce por
+   pseudo-elemento, invisível, exatamente como nas bolinhas.
+
+   No dedo, a fileira quebra em duas linhas e as áreas de toque de uma linha
+   chegariam a encostar na outra (13,5px de sobra para cada lado contra 24px de
+   intervalo). Por isso o intervalo sobe para 32px quando o ponteiro é grosso. */
+.rodape-link {
+  position: relative;
+}
+
+.rodape-link::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 44px;
+  transform: translateY(-50%);
+  /* só amplia a área de toque, não aparece na tela */
+}
+
+@media (pointer: coarse) {
+  .rodape-links {
+    gap: var(--sp-7);
+  }
+}
+
 /* ---------- 3. Borda elétrica: estática no celular ----------
    No desktop o contorno do card do Raio-X é desenhado quadro a quadro num canvas,
    deslocado por ruído, e cercado por três camadas de brilho borrado. É bonito e
@@ -100,4 +146,19 @@
   [data-meio-tom-instrucao] {
     display: none;
   }
+}
+
+/* ---------- 5. Assinatura do cabeçalho em tela estreita ----------
+   A assinatura do cabeçalho subiu de 10px e 7px para 12px e 11px, porque sete
+   pixels não se lê. Na largura de celular, porém, "UM PROGRAMA SOULSTORY" com
+   0,22em de espaçamento não cabe mais numa linha e quebra em duas, o que deixa
+   o bloco desequilibrado ao lado do logótipo.
+
+   Abaixo de 480px as duas linhas recuam para 10px e 9px, o maior par que ainda
+   cabe numa linha só. Mesmo assim a segunda linha continua maior do que os 7px
+   de antes. O !important é necessário porque o export deixou o tamanho no
+   atributo style de cada elemento, e estilo embutido vence folha de estilo. */
+@media (max-width: 480px) {
+  [data-dc-tpl="54"] { font-size: 10px !important; }
+  [data-dc-tpl="57"] { font-size: 9px !important; }
 }
