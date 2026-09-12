@@ -9,7 +9,14 @@
      para o navegador abrir a conexão e pedir o kit no primeiro byte do HTML. -->
 <link rel="preconnect" href="https://use.typekit.net" crossorigin>
 <link rel="preconnect" href="https://p.typekit.net" crossorigin>
-<link rel="stylesheet" href="https://use.typekit.net/wnf4ddz.css">
+<!-- O kit é buscado com prioridade alta (preload) mas sem bloquear a pintura:
+     vira folha de estilo assim que chega. O PageSpeed mediu 1.500ms de bloqueio
+     nas duas requisições em série do Typekit (o kit e o p.css que ele importa).
+     O comportamento do texto enquanto a fonte não chega é definido no painel
+     da Adobe Fonts (font-display do projeto web wnf4ddz): swap ou optional.
+     O <noscript> garante o kit para quem navega sem JavaScript. -->
+<link rel="preload" href="https://use.typekit.net/wnf4ddz.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://use.typekit.net/wnf4ddz.css"></noscript>
 <!-- estilos-base:inicio -->
 <style>
 /* =========================================================================

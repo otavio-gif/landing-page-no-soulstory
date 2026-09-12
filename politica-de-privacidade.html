@@ -7,7 +7,14 @@
 <meta name="description" content="Como a Soulstory trata os dados que você envia pelo formulário de contato: o que coletamos, para que usamos, por quanto tempo guardamos e quais são os seus direitos.">
 <link rel="preconnect" href="https://use.typekit.net" crossorigin>
 <link rel="preconnect" href="https://p.typekit.net" crossorigin>
-<link rel="stylesheet" href="https://use.typekit.net/wnf4ddz.css">
+<!-- O kit é buscado com prioridade alta (preload) mas sem bloquear a pintura:
+     vira folha de estilo assim que chega. O PageSpeed mediu 1.500ms de bloqueio
+     nas duas requisições em série do Typekit (o kit e o p.css que ele importa).
+     O comportamento do texto enquanto a fonte não chega é definido no painel
+     da Adobe Fonts (font-display do projeto web wnf4ddz): swap ou optional.
+     O <noscript> garante o kit para quem navega sem JavaScript. -->
+<link rel="preload" href="https://use.typekit.net/wnf4ddz.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://use.typekit.net/wnf4ddz.css"></noscript>
 <link rel="stylesheet" href="estilos-base.css">
 <style>
   /* Página de texto puro. Herda fontes, tokens e design system de
