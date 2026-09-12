@@ -2,9 +2,11 @@
 // Alterna três frases, letra por letra, trocando também a cor de fundo da pílula.
 //
 // Uma diferença proposital em relação ao original: antes de girar, o script mede
-// se a frase mais longa cabe na largura disponível. Quando não cabe (celular), a
-// pílula fica parada na última frase e quebra em duas linhas, em vez de transbordar
-// a tela. A medida é refeita quando a janela muda de tamanho.
+// se a frase mais longa cabe na largura disponível. Quando não cabe (celular), as
+// três frases continuam girando, só que dentro de uma pílula de tamanho travado,
+// com o texto quebrado em duas linhas. Travar largura e altura é o que impede o
+// título inteiro de subir e descer a cada troca. A medida é refeita quando a
+// janela muda de tamanho.
 (function () {
   'use strict';
 
@@ -28,6 +30,7 @@
   var geracao = 0;
   var relogio = null;
   var girando = false;
+  var estreito = false;   // true quando a frase mais longa nao cabe numa linha
   var movimentoReduzido = false;
   try { movimentoReduzido = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
 
@@ -51,8 +54,8 @@
     var camada = document.createElement('span');
     camada.setAttribute('aria-hidden', 'true');
     camada.style.cssText = 'display:inline-flex; padding:' + PADY + ' ' + PADX + '; box-sizing:border-box; line-height:1.1;'
-      + (podeQuebrar ? ' flex-wrap:wrap; justify-content:center;' : ' flex-wrap:nowrap; white-space:nowrap;');
-    if (absoluta) camada.style.cssText += 'position:absolute; left:0; top:0;';
+      + (podeQuebrar ? ' flex-wrap:wrap; justify-content:center; align-items:center; width:100%;' : ' flex-wrap:nowrap; white-space:nowrap;');
+    if (absoluta) camada.style.cssText += 'position:absolute; left:0; top:0;' + (podeQuebrar ? ' height:100%;' : '');
 
     var palavras = String(texto).split(' ');
     var i = 0;
@@ -120,23 +123,30 @@
     return maiorLarguraDeFrase() <= larguraDisponivel();
   }
 
-  // ---------- Modo parado (telas estreitas) ----------
-  function mostrarParado() {
-    pararRelogio();
-    girando = false;
-    atual = TEXTOS.length - 1; // a última frase é a mais forte da sequência
-    leitor.textContent = TEXTOS[atual];
-    raiz.style.backgroundColor = FUNDOS[atual];
-    raiz.style.width = 'auto';
-    raiz.style.whiteSpace = 'normal';
-    raiz.style.maxWidth = '100%';
-    var camada = montarCamada(TEXTOS[atual], 'parado', false, true);
-    palco.innerHTML = '';
-    palco.appendChild(camada);
+  // ---------- Medida do retangulo travado (telas estreitas) ----------
+  // Mede as três frases já quebradas na largura disponível e devolve a maior
+  // altura. É ela que fica fixa enquanto a pílula gira: sem isso, a troca de uma
+  // frase de duas linhas por uma de uma linha empurraria o título inteiro.
+  function maiorAlturaComQuebra(largura) {
+    var regua = document.createElement('span');
+    regua.style.cssText = 'position:absolute; visibility:hidden; pointer-events:none; left:-9999px; top:0; display:block; white-space:normal; width:' + largura + 'px;';
+    raiz.appendChild(regua);
+    var maior = 0;
+    TEXTOS.forEach(function (t) {
+      regua.innerHTML = '';
+      var camada = montarCamada(t, 'parado', false, true);
+      regua.appendChild(camada);
+      maior = Math.max(maior, camada.offsetHeight);
+    });
+    raiz.removeChild(regua);
+    return maior;
   }
 
-  // ---------- Modo girando (telas largas) ----------
+  // ---------- Troca de frase ----------
+  // No estreito a largura já está travada, então medir a camada só faria a
+  // pílula pular de tamanho a cada frase.
   function medirELargar(camada) {
+    if (estreito) return;
     var largura = camada.offsetWidth;
     if (largura) raiz.style.width = largura + 'px';
   }
@@ -150,8 +160,8 @@
     leitor.textContent = TEXTOS[atual];
     raiz.style.backgroundColor = FUNDOS[atual];
 
-    var entrando = montarCamada(TEXTOS[atual], 'entra', false, false);
-    var saindo = montarCamada(TEXTOS[anterior], 'sai', true, false);
+    var entrando = montarCamada(TEXTOS[atual], 'entra', false, estreito);
+    var saindo = montarCamada(TEXTOS[anterior], 'sai', true, estreito);
 
     palco.innerHTML = '';
     palco.appendChild(entrando);
@@ -169,14 +179,35 @@
 
   function pararRelogio() { if (relogio) { clearInterval(relogio); relogio = null; } }
 
-  function comecarAGirar() {
+  function comecarAGirar(modoEstreito) {
+    estreito = modoEstreito;
     girando = true;
     atual = 0;
     leitor.textContent = TEXTOS[0];
     raiz.style.backgroundColor = FUNDOS[0];
-    raiz.style.whiteSpace = 'nowrap';
-    raiz.style.maxWidth = '';
-    var primeira = montarCamada(TEXTOS[0], 'parado', false, false);
+    if (estreito) {
+      // A frase mais longa não cabe numa linha. Em vez de congelar numa frase só,
+      // a pílula vira um retângulo de tamanho fixo (a largura disponível, a altura
+      // da maior frase) e as três giram quebradas dentro dele.
+      var largura = larguraDisponivel();
+      raiz.style.whiteSpace = 'normal';
+      raiz.style.maxWidth = '100%';
+      raiz.style.width = largura + 'px';
+      raiz.style.height = maiorAlturaComQuebra(largura) + 'px';
+      palco.style.width = '100%';
+      palco.style.height = '100%';
+      palco.style.alignItems = 'center';
+      palco.style.justifyContent = 'center';
+    } else {
+      raiz.style.whiteSpace = 'nowrap';
+      raiz.style.maxWidth = '';
+      raiz.style.height = '';
+      palco.style.width = '';
+      palco.style.height = '';
+      palco.style.alignItems = '';
+      palco.style.justifyContent = '';
+    }
+    var primeira = montarCamada(TEXTOS[0], 'parado', false, estreito);
     palco.innerHTML = '';
     palco.appendChild(primeira);
     medirELargar(primeira);
@@ -188,15 +219,14 @@
   }
 
   // ---------- Escolha do modo, agora e a cada mudança de tamanho ----------
+  // Remonta só quando o modo realmente muda de um lado para o outro, para o giro
+  // não recomeçar do zero a cada respiro da janela.
   function decidirModo() {
-    var deveGirar = cabeNaLinha();
-    if (deveGirar && !girando) comecarAGirar();
-    else if (!deveGirar && girando) mostrarParado();
+    var modoEstreito = !cabeNaLinha();
+    if (!girando || modoEstreito !== estreito) comecarAGirar(modoEstreito);
   }
 
-  // primeira decisão: como nada foi montado ainda, força o caminho completo
-  if (cabeNaLinha()) comecarAGirar();
-  else mostrarParado();
+  comecarAGirar(!cabeNaLinha());
 
   var esperaResize = null;
   window.addEventListener('resize', function () {
