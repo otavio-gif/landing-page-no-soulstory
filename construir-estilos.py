@@ -83,9 +83,16 @@ def montar(arquivos, titulo):
         + "".join(f"     {a}\n" for a in arquivos)
         + "   ========================================================================= */\n"
     )
-    # os @import externos (o kit da Adobe) têm de vir antes de qualquer regra
-    topo = "\n".join(dict.fromkeys(externos))
-    return "\n".join(x for x in [topo, cabecalho, "\n".join(partes)] if x)
+    # Os @import externos (o kit da Adobe) NÃO entram mais no pacote. Por quê:
+    # um @import dentro do CSS só é descoberto depois que o CSS inteiro chega,
+    # o que enfileira a fonte atrás da folha de estilo e custa uma ida e volta
+    # inteira no 4G antes do primeiro pixel. O kit agora é chamado por <link>
+    # direto no <head> do index.html, antes de estilos-base.css, com preconnect.
+    # Continua sendo o kit oficial da Adobe, só que descoberto pelo navegador no
+    # primeiro byte do HTML em vez de no último byte do CSS.
+    if externos:
+        print("  (import externo deixado fora do pacote, vai no <head>: " + ", ".join(dict.fromkeys(externos)) + ")")
+    return "\n".join(x for x in [cabecalho, "\n".join(partes)] if x)
 
 
 for arquivos, saida, titulo in [

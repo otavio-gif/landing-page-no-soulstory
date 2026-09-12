@@ -162,3 +162,31 @@
   [data-dc-tpl="54"] { font-size: 10px !important; }
   [data-dc-tpl="57"] { font-size: 9px !important; }
 }
+
+/* ---------- 6. Pílula do hero já nasce quebrada no celular ----------
+   A pílula do texto rotativo vem do HTML com white-space: nowrap, e é o
+   JavaScript que, ao medir que a frase mais longa não cabe, a reconfigura em
+   três linhas. Na primeira pintura da página, porém, o script ainda não rodou:
+   a pílula aparece numa linha só e, um instante depois, cresce para três,
+   empurrando o título, o parágrafo e os botões para baixo. O PageSpeed media
+   esse salto como CLS de 0,10, o limite exato do "ruim".
+
+   Abaixo de 700px a pílula já nasce com quebra de linha, no mesmo estado em
+   que o script vai deixá-la. Quando ele roda, nada se move. O !important é
+   necessário porque o valor original está no atributo style do elemento. */
+@media (max-width: 699px) {
+  [data-texto-rotativo] {
+    white-space: normal !important;
+  }
+
+  /* A camada de texto que vem no HTML (marcada com data-rt-inicial) também
+     precisa quebrar e ocupar a largura toda, centralizada, que é exatamente a
+     geometria que o script monta depois. O script descarta essa camada ao
+     assumir, então a regra não alcança as camadas que ele cria. */
+  [data-texto-rotativo] [data-rt-inicial] {
+    white-space: normal !important;
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+}
