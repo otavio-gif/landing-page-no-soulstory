@@ -176,26 +176,42 @@
   var ESTILO_TEXTO_FINAL = 'margin:0; max-width:440px; font-family:var(--font-serif); font-style:italic; font-size:19px; line-height:1.6; color:rgba(250,248,245,0.72); text-wrap:pretty';
 
   var TEMPO_DE_ESPERA = 2000;        // quanto a tela de espera fica aberta
-  var DURACAO_CAMINHADA = 1800;      // o heroi chega um pouco antes da troca
-  var FIM_DA_CAMINHADA = 'calc(100% - 72px)'; // encostado na princesa (36px cada)
+  var DURACAO_CAMINHADA = 1800;      // o encontro acontece um pouco antes da troca
+  // Ponto de encontro: o mesmo do casal da tela final, centralizado, com 4px de
+  // sobreposicao de cada lado (36px cada personagem, 64px o par)
+  var FIM_DA_CAMINHADA = 'calc(50% - 32px)';
+  // Cada metade da barra passa 1px do centro: com 50% exatos, a emenda cai
+  // entre dois pixels no celular e aparece um risco escuro no meio
+  var METADE_DA_BARRA = 'calc(50% + 1px)';
 
-  // Tela de espera: o heroi atravessa a barra ate a princesa, e quando ele
-  // chega entra o casal da tela de agradecimento. Com movimento reduzido, a
-  // cena ja nasce no fim, parada.
+  // Dois quadros alternados fazem o personagem andar (as classes ja param
+  // sozinhas com movimento reduzido)
+  function andando(quadroA, quadroB) {
+    return '<div class="rx-fa">' + pix(quadroA, 4) + '</div><div class="rx-fb" style="position:absolute; left:0; top:0">' + pix(quadroB, 4) + '</div>';
+  }
+
+  // Tela de espera: o heroi e a princesa saem das pontas da barra e se
+  // encontram no centro, e a barra enche das duas pontas para o meio
+  // acompanhando cada um. Quando eles se encontram, entra o casal da tela de
+  // agradecimento no mesmo lugar. Com movimento reduzido, a cena ja nasce no
+  // fim, parada.
   function htmlEspera() {
     var parado = movimentoReduzido;
-    var heroi = parado
-      ? pix(HEROI_A, 4)
-      : '<div class="rx-fa">' + pix(HEROI_A, 4) + '</div><div class="rx-fb" style="position:absolute; left:0; top:0">' + pix(HEROI_B, 4) + '</div>';
+    var heroi = parado ? pix(HEROI_A, 4) : andando(HEROI_A, HEROI_B);
+    var princesa = parado ? pix(PRINCESA_A, 4) : andando(PRINCESA_A, PRINCESA_B);
+    var inicio = parado ? FIM_DA_CAMINHADA : '0px';
+    var metade = parado ? METADE_DA_BARRA : '0%';
     var transicao = DURACAO_CAMINHADA + 'ms var(--ease-out)';
+    var estiloMetade = 'position:absolute; top:0; bottom:0; width:' + metade + '; background:var(--ss-periwinkle); transition:width ' + transicao;
     return '' +
       '<div data-papel="tela-espera" role="status" style="grid-area:1 / 1; ' + ESTILO_TELA_FINAL + '">' +
         '<div style="' + ESTILO_CENA_FINAL + '">' +
           '<div style="position:relative; width:100%; height:66px">' +
-            '<div style="position:absolute; right:0; bottom:9px">' + pix(PRINCESA_A, 4) + '</div>' +
-            '<div data-papel="espera-heroi" style="position:absolute; bottom:9px; left:' + (parado ? FIM_DA_CAMINHADA : '0px') + '; transition:left ' + transicao + '">' + heroi + '</div>' +
+            '<div data-papel="espera-heroi" style="position:absolute; bottom:9px; left:' + inicio + '; transition:left ' + transicao + '">' + heroi + '</div>' +
+            '<div data-papel="espera-princesa" style="position:absolute; bottom:9px; right:' + inicio + '; transition:right ' + transicao + '">' + princesa + '</div>' +
             '<div style="position:absolute; left:0; right:0; bottom:0; height:9px; border-radius:var(--r-sm); background:rgba(250,248,245,0.14); overflow:hidden">' +
-              '<div data-papel="espera-barra" style="height:100%; width:' + (parado ? '100%' : '0%') + '; border-radius:var(--r-sm); background:var(--ss-periwinkle); transition:width ' + transicao + '"></div>' +
+              '<div data-papel="espera-barra-esq" style="left:0; ' + estiloMetade + '"></div>' +
+              '<div data-papel="espera-barra-dir" style="right:0; ' + estiloMetade + '"></div>' +
             '</div>' +
           '</div>' +
         '</div>' +
@@ -276,7 +292,7 @@
     renderizarPasso(true);
   }
 
-  // Faz o heroi andar e, passado o tempo de espera, revela o agradecimento
+  // Poe o casal para andar e, passado o tempo de espera, revela o agradecimento
   function iniciarEspera() {
     clearTimeout(timerEspera);
     if (!movimentoReduzido) {
@@ -284,9 +300,13 @@
       // da final. Sem isso a transicao nao acontece.
       requestAnimationFrame(function () { requestAnimationFrame(function () {
         var heroi = el('espera-heroi');
-        var barra = el('espera-barra');
+        var princesa = el('espera-princesa');
+        var barraEsq = el('espera-barra-esq');
+        var barraDir = el('espera-barra-dir');
         if (heroi) heroi.style.left = FIM_DA_CAMINHADA;
-        if (barra) barra.style.width = '100%';
+        if (princesa) princesa.style.right = FIM_DA_CAMINHADA;
+        if (barraEsq) barraEsq.style.width = METADE_DA_BARRA;
+        if (barraDir) barraDir.style.width = METADE_DA_BARRA;
       }); });
     }
     timerEspera = setTimeout(revelarObrigado, TEMPO_DE_ESPERA);
@@ -306,6 +326,19 @@
     obrigado.style.opacity = '1';
     obrigado.style.visibility = 'visible';
     obrigado.removeAttribute('aria-hidden');
+
+    // Terminada a troca, a tela de espera sai de cena de vez, e com ela os
+    // quadros de caminhada que seguiriam rodando escondidos. A tela final e a
+    // mais alta das duas, entao o modal nao muda de tamanho.
+    if (movimentoReduzido) {
+      espera.style.display = 'none';
+    } else {
+      espera.addEventListener('transitionend', function sumir(e) {
+        if (e.target !== espera) return;
+        espera.removeEventListener('transitionend', sumir);
+        espera.style.display = 'none';
+      });
+    }
   }
 
   function renderizarPasso(primeira) {
