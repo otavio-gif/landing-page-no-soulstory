@@ -688,14 +688,14 @@
     if (e.key === 'Escape' && estado.aberto) fechar();
   });
 
-  // o unico botao que abre o modal e o de dentro da secao de investimento
-  var abridor = document.querySelector('#investimento .sc-host[data-sc-name="RaioButton"] a');
-  if (abridor) {
+  // os botoes que abrem o modal sao os da secao de investimento: o de antes do
+  // cartao da oferta e o de dentro dele. Os demais da pagina rolam ate a secao.
+  Array.prototype.forEach.call(document.querySelectorAll('#investimento .sc-host[data-sc-name="RaioButton"] a'), function (abridor) {
     abridor.addEventListener('click', function (e) {
       e.preventDefault();
       abrir(abridor);
     });
-  }
+  });
 
   // mantem o evento original disponivel para outros gatilhos futuros
   window.addEventListener('soulstory:open-raiox', function () { abrir(null); });
