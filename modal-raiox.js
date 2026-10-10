@@ -117,9 +117,11 @@
   }
 
   // ---------- Montagem do modal ----------
+  var ESTILO_FECHAR = 'width:38px; height:38px; border-radius:50%; border:1px solid rgba(250,248,245,0.18); background:rgba(250,248,245,0.06); color:var(--ss-cream); font-size:22px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; flex:none; transition:background .2s ease';
+
   function htmlCabecalho() {
     return '' +
-      '<div style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:26px 30px 0">' +
+      '<div data-papel="cabecalho" style="display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:26px 30px 0">' +
         '<div style="display:flex; flex-direction:column; gap:12px">' +
           '<div aria-label="Nó · StoryFunnels · um programa Soulstory" style="display:flex; align-items:center; gap:12px">' +
             '<img src="images/no-symbol-void.svg" alt="" style="width:34px; height:34px; flex:none; display:block">' +
@@ -134,14 +136,17 @@
           '</div>' +
           '<span style="font-family:var(--font-mono); font-size:11px; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:rgba(250,248,245,0.55)">Raio-X de Marca · Gratuito · 45 min</span>' +
         '</div>' +
-        '<button type="button" data-acao="fechar" aria-label="Fechar" style="width:38px; height:38px; border-radius:50%; border:1px solid rgba(250,248,245,0.18); background:rgba(250,248,245,0.06); color:var(--ss-cream); font-size:22px; line-height:1; cursor:pointer; display:flex; align-items:center; justify-content:center; flex:none; transition:background .2s ease">×</button>' +
+        '<button type="button" data-acao="fechar" aria-label="Fechar" style="' + ESTILO_FECHAR + '">×</button>' +
       '</div>';
   }
 
   function htmlJogo() {
     return '' +
-      '<div style="padding:18px 30px 0">' +
-        '<div style="margin-bottom:8px"><span data-papel="passo" style="font-family:var(--font-mono); font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ss-periwinkle)"></span></div>' +
+      '<div data-papel="jogo" style="padding:18px 30px 0">' +
+        '<div data-papel="linha-passo" style="margin-bottom:8px"><span data-papel="passo" style="font-family:var(--font-mono); font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ss-periwinkle)"></span>' +
+          // Fechar da pergunta 2 em diante, quando o cabecalho sai de cena
+          '<button type="button" data-acao="fechar" aria-label="Fechar" data-papel="fechar-compacto" style="' + ESTILO_FECHAR + '; display:none">×</button>' +
+        '</div>' +
         '<div style="position:relative; height:58px">' +
           '<div style="position:absolute; right:1px; bottom:5px; pointer-events:none">' + pix(PRINCESA, 2) + '</div>' +
           '<div data-papel="gorila" style="position:absolute; right:26px; bottom:1px; transform-origin:center bottom; transition:transform .6s ease, filter .6s ease; pointer-events:none">' + pix(GORILA, 3) + '</div>' +
@@ -158,7 +163,7 @@
     return '' +
       htmlCabecalho() +
       htmlJogo() +
-      '<div style="margin-top:16px; background:#FFFFFF; padding:18px 30px; border-top:1px solid rgba(60,57,110,0.12); border-bottom:1px solid rgba(60,57,110,0.12)">' +
+      '<div data-papel="faixa" style="margin-top:16px; background:#FFFFFF; padding:18px 30px; border-top:1px solid rgba(60,57,110,0.12); border-bottom:1px solid rgba(60,57,110,0.12)">' +
         '<p style="margin:0; font-family:var(--font-sans); font-size:16px; line-height:1.55; color:var(--text-secondary); text-wrap:pretty">As respostas abaixo vão ajudar o especialista Soulstory a realizar um <strong style="color:var(--ss-ink); font-weight:600">raio-x personalizado e exclusivo</strong> <span style="font-family:var(--font-serif); font-style:italic; color:var(--ss-indigo)">(leva apenas 2 minutos)</span>.</p>' +
       '</div>' +
       '<div class="raiox-scroll" style="flex:1; min-height:0; overflow-y:auto; padding:28px 30px 8px">' +
@@ -348,6 +353,19 @@
     var total = PERGUNTAS.length;
     var ultimo = estado.passo === total - 1;
     var valor = estado.form[q.key] || '';
+
+    // Da segunda pergunta em diante, o topo fica so com a barra de progresso: o
+    // logo e a faixa branca de apresentacao ja cumpriram o papel na primeira.
+    // O fechar desce para a linha da "Pergunta N", no mesmo ponto da tela em
+    // que estava (26px do topo, 30px da direita).
+    var compacto = estado.passo > 0;
+    el('cabecalho').style.display = compacto ? 'none' : 'flex';
+    el('faixa').style.display = compacto ? 'none' : 'block';
+    el('jogo').style.paddingTop = compacto ? '26px' : '18px';
+    el('linha-passo').style.cssText = compacto
+      ? 'display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:8px'
+      : 'margin-bottom:8px';
+    el('fechar-compacto').style.display = compacto ? 'flex' : 'none';
 
     el('passo').textContent = 'Pergunta ' + (estado.passo + 1);
     var pct = ((estado.passo + 1) / total * 100).toFixed(1) + '%';
