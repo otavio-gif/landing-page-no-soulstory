@@ -104,6 +104,7 @@
   PERGUNTAS.forEach(function (q) { estado.form[q.key] = ''; });
   var filaParcial = Promise.resolve();  // encadeia os envios parciais, um de cada vez
   var timerAuto = null;       // avanco automatico pendente nas perguntas de escolha
+  var timerEspera = null;     // troca da tela de espera pelo agradecimento
   var raiz = null;            // container fixo do modal
   var botaoOrigem = null;     // quem abriu, para devolver o foco ao fechar
   var jogo = { ligado: false, raf: null, barril: null, proximo: 0, anteriorT: 0, pulou: false };
@@ -167,6 +168,42 @@
       '</div>';
   }
 
+  // ---------- Telas do fim (espera e agradecimento) ----------
+  // As duas dividem a mesma moldura, para a troca entre elas nao mudar o desenho.
+  var ESTILO_TELA_FINAL = 'position:relative; padding:40px 40px 52px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:16px';
+  var ESTILO_CENA_FINAL = 'position:relative; width:100%; max-width:320px; height:164px; display:flex; align-items:flex-end; justify-content:center';
+  var ESTILO_TITULO_FINAL = 'margin:0; font-family:var(--font-sans); font-weight:700; font-size:31px; letter-spacing:-0.5px; color:var(--ss-cream)';
+  var ESTILO_TEXTO_FINAL = 'margin:0; max-width:440px; font-family:var(--font-serif); font-style:italic; font-size:19px; line-height:1.6; color:rgba(250,248,245,0.72); text-wrap:pretty';
+
+  var TEMPO_DE_ESPERA = 2000;        // quanto a tela de espera fica aberta
+  var DURACAO_CAMINHADA = 1800;      // o heroi chega um pouco antes da troca
+  var FIM_DA_CAMINHADA = 'calc(100% - 72px)'; // encostado na princesa (36px cada)
+
+  // Tela de espera: o heroi atravessa a barra ate a princesa, e quando ele
+  // chega entra o casal da tela de agradecimento. Com movimento reduzido, a
+  // cena ja nasce no fim, parada.
+  function htmlEspera() {
+    var parado = movimentoReduzido;
+    var heroi = parado
+      ? pix(HEROI_A, 4)
+      : '<div class="rx-fa">' + pix(HEROI_A, 4) + '</div><div class="rx-fb" style="position:absolute; left:0; top:0">' + pix(HEROI_B, 4) + '</div>';
+    var transicao = DURACAO_CAMINHADA + 'ms var(--ease-out)';
+    return '' +
+      '<div data-papel="tela-espera" role="status" style="grid-area:1 / 1; ' + ESTILO_TELA_FINAL + '">' +
+        '<div style="' + ESTILO_CENA_FINAL + '">' +
+          '<div style="position:relative; width:100%; height:66px">' +
+            '<div style="position:absolute; right:0; bottom:9px">' + pix(PRINCESA_A, 4) + '</div>' +
+            '<div data-papel="espera-heroi" style="position:absolute; bottom:9px; left:' + (parado ? FIM_DA_CAMINHADA : '0px') + '; transition:left ' + transicao + '">' + heroi + '</div>' +
+            '<div style="position:absolute; left:0; right:0; bottom:0; height:9px; border-radius:var(--r-sm); background:rgba(250,248,245,0.14); overflow:hidden">' +
+              '<div data-papel="espera-barra" style="height:100%; width:' + (parado ? '100%' : '0%') + '; border-radius:var(--r-sm); background:var(--ss-periwinkle); transition:width ' + transicao + '"></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        '<h3 style="' + ESTILO_TITULO_FINAL + '">Aguarde um momento.</h3>' +
+        '<p style="' + ESTILO_TEXTO_FINAL + '">Seus dados estão sendo processados.</p>' +
+      '</div>';
+  }
+
   function htmlEnviado() {
     var coracoes = [
       { left: '30%', bottom: '62px', delay: '' },
@@ -176,9 +213,11 @@
     ].map(function (c) {
       return '<div class="rx-heart" style="position:absolute; left:' + c.left + '; bottom:' + c.bottom + ';' + c.delay + '">' + pix(CORACAO, 3) + '</div>';
     }).join('');
+    // Nasce escondida, no mesmo lugar da tela de espera. Assim o modal ja tem
+    // a altura final desde o primeiro instante e nao pula na troca.
     return '' +
-      '<div style="position:relative; padding:40px 40px 52px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:16px">' +
-        '<div style="position:relative; width:100%; max-width:320px; height:164px; display:flex; align-items:flex-end; justify-content:center">' +
+      '<div data-papel="tela-obrigado" aria-hidden="true" style="grid-area:1 / 1; visibility:hidden; opacity:0; ' + ESTILO_TELA_FINAL + '">' +
+        '<div style="' + ESTILO_CENA_FINAL + '">' +
           coracoes +
           '<div class="rx-couple" style="position:relative; display:flex; align-items:flex-end">' +
             '<div style="position:relative; margin-right:-4px"><div class="rx-fa">' + pix(HEROI_A, 4) + '</div><div class="rx-fb" style="position:absolute; left:0; top:0">' + pix(HEROI_B, 4) + '</div></div>' +
@@ -186,8 +225,8 @@
             '<div style="position:absolute; left:50%; bottom:18px; transform:translateX(-50%); width:15px; height:6px; background:var(--ss-cream); border-radius:3px"></div>' +
           '</div>' +
         '</div>' +
-        '<h3 style="margin:0; font-family:var(--font-sans); font-weight:700; font-size:31px; letter-spacing:-0.5px; color:var(--ss-cream)">Recebemos a sua solicitação.</h3>' +
-        '<p style="margin:0; max-width:440px; font-family:var(--font-serif); font-style:italic; font-size:19px; line-height:1.6; color:rgba(250,248,245,0.72); text-wrap:pretty">Em breve a Soulstory entra em contato para confirmar o seu Raio-X de Marca gratuito.</p>' +
+        '<h3 style="' + ESTILO_TITULO_FINAL + '">Recebemos a sua solicitação.</h3>' +
+        '<p style="' + ESTILO_TEXTO_FINAL + '">Em breve a Soulstory entra em contato para confirmar o seu Raio-X de Marca gratuito.</p>' +
         '<button type="button" data-acao="fechar" style="margin-top:6px; background:var(--ss-periwinkle); color:#0C0B14; border:none; border-radius:12px; padding:15px 32px; font-family:var(--font-sans); font-weight:600; font-size:17px; cursor:pointer">Fechar</button>' +
       '</div>';
   }
@@ -224,11 +263,45 @@
   function renderizar() {
     var conteudo = el('conteudo');
     if (estado.enviado) {
-      conteudo.innerHTML = htmlEnviado();
+      // As duas telas do fim ocupam a mesma celula da grade, uma sobre a outra
+      conteudo.innerHTML = '<div style="display:grid">' + htmlEspera() + htmlEnviado() + '</div>';
+      iniciarEspera();
       return;
     }
     conteudo.innerHTML = htmlFormulario();
     renderizarPasso(true);
+  }
+
+  // Faz o heroi andar e, passado o tempo de espera, revela o agradecimento
+  function iniciarEspera() {
+    clearTimeout(timerEspera);
+    if (!movimentoReduzido) {
+      // Dois quadros de folga para o navegador desenhar a posicao inicial antes
+      // da final. Sem isso a transicao nao acontece.
+      requestAnimationFrame(function () { requestAnimationFrame(function () {
+        var heroi = el('espera-heroi');
+        var barra = el('espera-barra');
+        if (heroi) heroi.style.left = FIM_DA_CAMINHADA;
+        if (barra) barra.style.width = '100%';
+      }); });
+    }
+    timerEspera = setTimeout(revelarObrigado, TEMPO_DE_ESPERA);
+  }
+
+  function revelarObrigado() {
+    timerEspera = null;
+    var espera = el('tela-espera');
+    var obrigado = el('tela-obrigado');
+    if (!espera || !obrigado) return;
+    var troca = movimentoReduzido ? 'none' : 'opacity var(--dur-base) var(--ease-out), visibility var(--dur-base)';
+    espera.style.transition = troca;
+    obrigado.style.transition = troca;
+    espera.style.opacity = '0';
+    espera.style.visibility = 'hidden';
+    espera.setAttribute('aria-hidden', 'true');
+    obrigado.style.opacity = '1';
+    obrigado.style.visibility = 'visible';
+    obrigado.removeAttribute('aria-hidden');
   }
 
   function renderizarPasso(primeira) {
@@ -407,11 +480,11 @@
     });
   }
 
-  // Envio final. O agradecimento aparece na hora do clique, sem esperar o Apps
-  // Script: ele so responde depois de mandar os WhatsApps de aviso, o que leva
-  // de 10 a 15 segundos. O envio segue em segundo plano. Se as duas tentativas
-  // falharem, a linha continua na planilha como parcial, com tudo menos a
-  // ultima resposta.
+  // Envio final. A tela de espera aparece na hora do clique e, 2 segundos
+  // depois, o agradecimento. Nenhuma das duas espera o Apps Script: ele so
+  // responde depois de mandar os WhatsApps de aviso, o que leva de 10 a 15
+  // segundos. O envio segue em segundo plano. Se as duas tentativas falharem,
+  // a linha continua na planilha como parcial, com tudo menos a ultima resposta.
   function enviar() {
     if (estado.enviado) return;
 
@@ -419,8 +492,8 @@
     // durante a segunda tentativa nao mexer no que vai para a planilha.
     enviarCompleto(JSON.stringify(montarPayload('completo')), 1);
 
-    // A conversao conta junto com o agradecimento, para quem fecha a aba logo
-    // depois tambem entrar na medicao. Os parciais ficam de fora: sao outra funcao.
+    // A conversao conta no clique, para quem fecha a aba durante a espera
+    // tambem entrar na medicao. Os parciais ficam de fora: sao outra funcao.
     avisarGtm('raiox_completou', { raiox_id: estado.id });
     pararJogo();
     estado.enviado = true;
@@ -463,6 +536,10 @@
     estado.passo = 0;
     estado.enviado = false;
     estado.id = '';
+    // Reabrir durante a espera nao pode deixar o agradecimento cair por cima
+    // do formulario novo
+    clearTimeout(timerEspera);
+    timerEspera = null;
     filaParcial = Promise.resolve();
     try { document.body.style.overflow = 'hidden'; } catch (e) {}
     raiz.style.display = 'flex';
