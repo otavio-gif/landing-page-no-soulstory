@@ -235,9 +235,13 @@
     raiz = document.createElement('div');
     raiz.setAttribute('data-modal-raiox', '');
     raiz.style.cssText = 'position:fixed; inset:0; z-index:120; display:flex; align-items:center; justify-content:center; padding:18px; font-family:var(--font-sans)';
+    // overflow:clip no dialogo: o circulo desfocado do canto passa 70px da borda
+    // direita, e com overflow:hidden o navegador ainda rolava o dialogo para o
+    // lado ao focar um campo, deslocando todo o conteudo no celular. O clip
+    // corta igual e nao deixa rolar. Navegador antigo sem clip fica no hidden.
     raiz.innerHTML = '' +
       '<div data-acao="fechar" style="position:absolute; inset:0; background:rgba(9,8,17,0.62); backdrop-filter:blur(7px); -webkit-backdrop-filter:blur(7px); animation:raioxFade .3s ease"></div>' +
-      '<div role="dialog" aria-modal="true" aria-label="Agendar Raio-X de Marca" style="position:relative; width:min(680px, 100%); max-height:min(94vh, 960px); display:flex; flex-direction:column; border-radius:28px; overflow:hidden; background:rgba(20,19,38,0.55); backdrop-filter:blur(34px) saturate(180%); -webkit-backdrop-filter:blur(34px) saturate(180%); border:1px solid rgba(200,208,255,0.22); box-shadow:0 50px 130px -30px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.22); animation:raioxPop .44s cubic-bezier(0.22,1,0.36,1)">' +
+      '<div role="dialog" aria-modal="true" aria-label="Agendar Raio-X de Marca" style="position:relative; width:min(680px, 100%); max-height:min(94vh, 960px); display:flex; flex-direction:column; border-radius:28px; overflow:hidden; overflow:clip; background:rgba(20,19,38,0.55); backdrop-filter:blur(34px) saturate(180%); -webkit-backdrop-filter:blur(34px) saturate(180%); border:1px solid rgba(200,208,255,0.22); box-shadow:0 50px 130px -30px rgba(0,0,0,0.75), inset 0 1px 0 rgba(255,255,255,0.22); animation:raioxPop .44s cubic-bezier(0.22,1,0.36,1)">' +
         '<div aria-hidden="true" style="position:absolute; inset:0; pointer-events:none; background:radial-gradient(130% 92% at 12% -10%, rgba(255,255,255,0.16), rgba(255,255,255,0) 46%)"></div>' +
         '<div aria-hidden="true" style="position:absolute; top:-90px; right:-70px; width:270px; height:270px; border-radius:50%; background:rgba(142,159,238,0.30); filter:blur(72px); pointer-events:none"></div>' +
         '<div aria-hidden="true" style="position:absolute; bottom:-100px; left:-60px; width:250px; height:250px; border-radius:50%; background:rgba(140,198,255,0.16); filter:blur(78px); pointer-events:none"></div>' +
