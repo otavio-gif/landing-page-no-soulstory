@@ -70,7 +70,9 @@
     { key: 'whatsapp', kind: 'text', input: 'tel', label: 'Qual é o seu WhatsApp?', hint: 'Usamos para confirmar o seu Raio-X.', placeholder: '(00) 00000-0000', required: true },
     { key: 'email', kind: 'text', input: 'email', label: 'Qual é o seu melhor e-mail?', hint: 'Enviamos os detalhes por aqui.', placeholder: 'voce@empresa.com', required: true },
     { key: 'empresa', kind: 'text', input: 'text', label: 'Qual é o nome da sua empresa?', placeholder: 'Nome da empresa', required: true },
-    { key: 'site', kind: 'text', input: 'url', label: 'Qual é o site da empresa?', hint: 'Opcional.', placeholder: 'https://', required: false },
+    // Obrigatoria, com uma saida para quem ainda nao tem site: a alternativa
+    // abaixo do campo responde por ela e avanca sozinha, como uma escolha
+    { key: 'site', kind: 'text', input: 'url', label: 'Qual é o site da empresa?', placeholder: 'https://', required: true, alternativa: 'Não tenho site ainda', avancoAuto: true },
     { key: 'instagram', kind: 'text', input: 'text', label: 'Qual é o Instagram da empresa?', hint: 'Opcional.', placeholder: '@perfil', required: false },
     { key: 'funcao', kind: 'choice', avancoAuto: true, label: 'Qual é a sua função na empresa?', required: true, options: ['Dono(a) do negócio / CEO', 'Diretor(a)', 'Gerente', 'Colaborador(a)', 'Freelancer ou consultor(a)', 'Outro'] },
     { key: 'faturamento', kind: 'choice', avancoAuto: true, label: 'Qual é o faturamento anual da empresa?', required: false, options: ['Menos de R$ 300.000', 'Entre R$ 300.001 e R$ 500.000', 'Entre R$ 501.000 e R$ 1.000.000', 'Entre R$ 1.000.001 e R$ 5.000.000', 'Acima de R$ 5.000.000'] },
@@ -488,9 +490,15 @@
     // modal, entao ali o botao segue no rodape.
     if (q.kind === 'text') {
       h += '<div style="display:flex; gap:8px; align-items:stretch">' +
-        '<input type="' + q.input + '" value="' + escaparHtml(valor) + '" placeholder="' + escaparHtml(q.placeholder || '') + '" class="raiox-field" data-papel="campo" style="' + ESTILO_INPUT + '; min-width:0; flex:1 1 auto">' +
+        '<input type="' + q.input + '" value="' + escaparHtml(q.alternativa && valor === q.alternativa ? '' : valor) + '" placeholder="' + escaparHtml(q.placeholder || '') + '" class="raiox-field" data-papel="campo" style="' + ESTILO_INPUT + '; min-width:0; flex:1 1 auto">' +
         '<button type="button" data-acao="avancar" class="raiox-avancar-campo" style="' + ESTILO_AVANCAR_CAMPO + '">' + rotuloAvancar + '</button>' +
       '</div>';
+      if (q.alternativa) {
+        var marcada = valor === q.alternativa;
+        h += '<button type="button" data-acao="opcao" data-valor="' + escaparHtml(q.alternativa) + '" data-papel="alternativa" style="' + (marcada ? ESTILO_OPCAO_SEL : ESTILO_OPCAO) + '; margin-top:12px">' +
+          '<span style="' + (marcada ? ESTILO_PONTO_SEL : ESTILO_PONTO) + '"></span><span style="flex:1; text-align:left">' + escaparHtml(q.alternativa) + '</span>' +
+        '</button>';
+      }
     } else if (q.kind === 'textarea') {
       h += '<textarea placeholder="' + escaparHtml(q.placeholder || '') + '" class="raiox-field" data-papel="campo" style="' + ESTILO_TEXTAREA + '">' + escaparHtml(valor) + '</textarea>';
     } else {
@@ -551,6 +559,11 @@
     }
     estado.form[q.key] = v;
     mostrarErro('');
+    var alternativa = el('alternativa');
+    if (alternativa) {
+      alternativa.style.cssText = ESTILO_OPCAO + '; margin-top:12px';
+      alternativa.firstChild.style.cssText = ESTILO_PONTO;
+    }
   }
 
   function escolher(valor) {
