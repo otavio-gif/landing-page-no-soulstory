@@ -227,6 +227,48 @@
       '</div>';
   }
 
+  var ESTILO_BOTAO_FINAL = 'max-width:100%; background:var(--ss-periwinkle); color:#0C0B14; border:none; border-radius:12px; padding:15px 32px; font-family:var(--font-sans); font-weight:600; font-size:17px; line-height:1.3; cursor:pointer';
+  var ESTILO_CONTADOR = 'font-family:var(--font-mono); font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ss-periwinkle)';
+  var ESTILO_TITULO_ENTREGAVEL = 'margin:0; font-family:var(--font-sans); font-weight:700; font-size:26px; line-height:1.2; letter-spacing:-0.4px; color:var(--ss-cream); text-wrap:balance';
+  var ESTILO_AVISO_WHATSAPP = 'margin:0; padding:14px 18px; border-radius:var(--r-lg); background:rgba(142,159,238,0.12); border:1px solid rgba(142,159,238,0.35); font-family:var(--font-sans); font-size:17px; font-weight:500; line-height:1.5; color:var(--ss-cream); text-wrap:pretty';
+
+  // Os quatro entregaveis do Raio-X, na ordem do cartao da oferta, com o mesmo
+  // mockup que aparece la
+  var ENTREGAVEIS = [
+    { imagem: 'diag-mock-1', titulo: 'Análise estratégica do seu funil de vendas', texto: 'Veja onde o seu funil de vendas está perdendo dinheiro, e pare de perder vendas.' },
+    { imagem: 'diag-mock-2', titulo: 'Análise estratégica da mensagem', texto: 'Descubra o que o cliente entende quando você fala, e o que dizer pra ele escolher você (pagando mais caro).' },
+    { imagem: 'diag-mock-3', titulo: 'Análise estratégica da oferta', texto: 'Entenda por que o cliente pede desconto, e como vender sem baixar o preço, mesmo sendo mais caro que os concorrentes.' },
+    { imagem: 'diag-mock-4', titulo: 'Plano de ação aplicável em até 28 dias', texto: 'Saia sabendo o que fazer amanhã cedo, e em que ordem, pra aplicar tudo em até 28 dias.' }
+  ];
+  var AVISO_WHATSAPP = 'Olhe o seu WhatsApp, nossa equipe mandou o link para você agendar o seu raio-x.';
+
+  // X discreto no canto das telas do fim, no mesmo desenho do X do formulario
+  function htmlFecharCanto() {
+    return '<button type="button" data-acao="fechar" aria-label="Fechar" style="' + ESTILO_FECHAR + '; position:absolute; top:20px; right:20px">×</button>';
+  }
+
+  // Uma tela por entregavel: contador, mockup, titulo, texto e o botao que
+  // segue. A ultima traz o aviso do WhatsApp e fecha o modal. O botao fica
+  // sempre no pe da tela, no mesmo lugar, para o dedo nao precisar procurar.
+  function htmlEntregavel(item, i) {
+    var ultimo = i === ENTREGAVEIS.length - 1;
+    var botao = ultimo
+      ? '<button type="button" data-acao="fechar" data-principal="" style="' + ESTILO_BOTAO_FINAL + '; margin-top:auto">Fechar</button>'
+      : '<button type="button" data-acao="entregavel-proximo" data-principal="" style="' + ESTILO_BOTAO_FINAL + '; margin-top:auto">Próximo</button>';
+    return '' +
+      '<div data-papel="entregavel-' + (i + 1) + '" aria-hidden="true" style="grid-area:1 / 1; visibility:hidden; opacity:0; ' + ESTILO_TELA_FINAL + '">' +
+        htmlFecharCanto() +
+        '<span style="' + ESTILO_CONTADOR + '">' + (i + 1) + '/' + ENTREGAVEIS.length + '</span>' +
+        '<div style="width:100%; max-width:220px; box-sizing:border-box; padding:9px; border-radius:var(--r-lg); background:var(--ss-warm-veil)">' +
+          '<picture><source type="image/webp" srcset="images/' + item.imagem + '.webp"><img src="images/' + item.imagem + '.png" alt="" width="600" height="475" decoding="async" style="width:100%; height:auto; display:block"></picture>' +
+        '</div>' +
+        '<h3 style="' + ESTILO_TITULO_ENTREGAVEL + '">' + item.titulo + '</h3>' +
+        '<p style="' + ESTILO_TEXTO_FINAL + '">' + item.texto + '</p>' +
+        (ultimo ? '<p style="' + ESTILO_AVISO_WHATSAPP + '">' + AVISO_WHATSAPP + '</p>' : '') +
+        botao +
+      '</div>';
+  }
+
   function htmlEnviado() {
     var coracoes = [
       { left: '30%', bottom: '62px', delay: '' },
@@ -250,7 +292,10 @@
         '</div>' +
         '<h3 style="' + ESTILO_TITULO_FINAL + '">Recebemos a sua solicitação.</h3>' +
         '<p style="' + ESTILO_TEXTO_FINAL + '">Em breve a Soulstory entra em contato para confirmar o seu Raio-X de Marca gratuito.</p>' +
-        '<button type="button" data-acao="fechar" style="margin-top:6px; background:var(--ss-periwinkle); color:#0C0B14; border:none; border-radius:12px; padding:15px 32px; font-family:var(--font-sans); font-weight:600; font-size:17px; cursor:pointer">Fechar</button>' +
+        // Em vez de fechar, o botao principal leva aos entregaveis. Para sair
+        // continua havendo o X do canto, a tecla Esc e o clique fora do modal.
+        '<button type="button" data-acao="ver-entregaveis" style="' + ESTILO_BOTAO_FINAL + '; margin-top:6px">Veja o que você vai receber gratuitamente</button>' +
+        htmlFecharCanto() +
       '</div>';
   }
 
@@ -281,6 +326,8 @@
       if (acao === 'voltar') irPara(estado.passo - 1);
       if (acao === 'avancar') avancar();
       if (acao === 'opcao') escolher(alvo.getAttribute('data-valor'));
+      if (acao === 'ver-entregaveis') mostrarEntregaveis();
+      if (acao === 'entregavel-proximo') proximoEntregavel(alvo);
     });
   }
 
@@ -291,7 +338,8 @@
     var conteudo = el('conteudo');
     if (estado.enviado) {
       // As duas telas do fim ocupam a mesma celula da grade, uma sobre a outra
-      conteudo.innerHTML = '<div style="display:grid">' + htmlEspera() + htmlEnviado() + '</div>';
+      // Em tela baixa, a grade rola por dentro, para o botao do pe nunca sumir
+      conteudo.innerHTML = '<div class="raiox-scroll" style="display:grid; min-height:0; overflow-y:auto">' + htmlEspera() + htmlEnviado() + '</div>';
       iniciarEspera();
       return;
     }
@@ -319,20 +367,60 @@
     timerEspera = setTimeout(revelarObrigado, TEMPO_DE_ESPERA);
   }
 
+  // Troca uma tela do fim por outra com um fade curto. As duas dividem a mesma
+  // celula da grade, entao o modal nao muda de tamanho.
+  // A tela que sai so se esconde no fim do fade. A que entra fica visivel na
+  // hora (sem transicao de visibility) e aparece pela opacidade, para o botao
+  // dela ja poder receber o foco.
+  function trocarTela(de, para) {
+    var fade = 'opacity var(--dur-base) var(--ease-out)';
+    de.style.transition = movimentoReduzido ? 'none' : fade + ', visibility var(--dur-base)';
+    para.style.transition = movimentoReduzido ? 'none' : fade;
+    de.style.opacity = '0';
+    de.style.visibility = 'hidden';
+    de.setAttribute('aria-hidden', 'true');
+    para.style.opacity = '1';
+    para.style.visibility = 'visible';
+    para.removeAttribute('aria-hidden');
+  }
+
+  // "Veja o que voce vai receber": os entregaveis entram na mesma grade, um por
+  // tela, e o agradecimento sai
+  function mostrarEntregaveis() {
+    var obrigado = el('tela-obrigado');
+    if (!obrigado || el('entregavel-1')) return;
+    obrigado.parentNode.insertAdjacentHTML('beforeend', ENTREGAVEIS.map(htmlEntregavel).join(''));
+    irParaTela(obrigado, el('entregavel-1'));
+  }
+
+  function proximoEntregavel(botao) {
+    var atual = botao.closest('[data-papel^="entregavel-"]');
+    var n = Number(atual.getAttribute('data-papel').split('-')[1]);
+    var seguinte = el('entregavel-' + (n + 1));
+    if (seguinte) irParaTela(atual, seguinte);
+  }
+
+  // Troca de tela por clique: o foco do teclado vai junto, para o botao
+  // principal da tela nova, em vez de se perder no botao que sumiu. O foco
+  // espera dois quadros: no instante da troca a tela nova ainda esta no comeco
+  // da transicao de visibility, contada como escondida, e o navegador recusa o
+  // foco (inclusive com movimento reduzido, que encurta mas nao zera as transicoes)
+  function irParaTela(de, para) {
+    trocarTela(de, para);
+    var principal = para.querySelector('[data-principal]');
+    if (!principal) return;
+    requestAnimationFrame(function () { requestAnimationFrame(function () {
+      if (!estado.aberto || para.getAttribute('aria-hidden') === 'true') return;
+      try { principal.focus({ preventScroll: true }); } catch (e) {}
+    }); });
+  }
+
   function revelarObrigado() {
     timerEspera = null;
     var espera = el('tela-espera');
     var obrigado = el('tela-obrigado');
     if (!espera || !obrigado) return;
-    var troca = movimentoReduzido ? 'none' : 'opacity var(--dur-base) var(--ease-out), visibility var(--dur-base)';
-    espera.style.transition = troca;
-    obrigado.style.transition = troca;
-    espera.style.opacity = '0';
-    espera.style.visibility = 'hidden';
-    espera.setAttribute('aria-hidden', 'true');
-    obrigado.style.opacity = '1';
-    obrigado.style.visibility = 'visible';
-    obrigado.removeAttribute('aria-hidden');
+    trocarTela(espera, obrigado);
 
     // Terminada a troca, a tela de espera sai de cena de vez, e com ela os
     // quadros de caminhada que seguiriam rodando escondidos. A tela final e a
