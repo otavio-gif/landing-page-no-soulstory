@@ -213,7 +213,9 @@
     var transicao = DURACAO_CAMINHADA + 'ms var(--ease-out)';
     var estiloMetade = 'position:absolute; top:0; bottom:0; width:' + metade + '; background:var(--ss-periwinkle); transition:width ' + transicao;
     return '' +
-      '<div data-papel="tela-espera" role="status" style="grid-area:1 / 1; ' + ESTILO_TELA_FINAL + '">' +
+      // Centralizada na vertical: a tela tem a altura do agradecimento, mais
+      // alto, e com o conteudo no topo sobrava um vazio grande embaixo
+      '<div data-papel="tela-espera" role="status" style="grid-area:1 / 1; ' + ESTILO_TELA_FINAL + '; justify-content:center">' +
         '<div style="' + ESTILO_CENA_FINAL + '">' +
           '<div style="position:relative; width:100%; height:66px">' +
             '<div data-papel="espera-heroi" style="position:absolute; bottom:9px; left:' + inicio + '; transition:left ' + transicao + '">' + heroi + '</div>' +
@@ -232,6 +234,8 @@
   var ESTILO_BOTAO_FINAL = 'max-width:100%; background:var(--ss-periwinkle); color:#0C0B14; border:none; border-radius:12px; padding:15px 32px; font-family:var(--font-sans); font-weight:600; font-size:17px; line-height:1.3; cursor:pointer';
   var ESTILO_CONTADOR = 'font-family:var(--font-mono); font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ss-periwinkle)';
   var ESTILO_TITULO_ENTREGAVEL = 'margin:0; font-family:var(--font-sans); font-weight:700; font-size:26px; line-height:1.2; letter-spacing:-0.4px; color:var(--ss-cream); text-wrap:balance';
+  var ESTILO_ROTULO_BARRA = 'font-family:var(--font-mono); font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:rgba(250,248,245,0.6)';
+  var ESTILO_NOTA_FINAL = 'margin:0; max-width:440px; font-family:var(--font-sans); font-size:15px; line-height:1.5; color:rgba(250,248,245,0.6); text-wrap:pretty';
   var ESTILO_AVISO_WHATSAPP = 'margin:0; padding:14px 18px; border-radius:var(--r-lg); background:rgba(142,159,238,0.12); border:1px solid rgba(142,159,238,0.35); font-family:var(--font-sans); font-size:17px; font-weight:500; line-height:1.5; color:var(--ss-cream); text-wrap:pretty';
 
   // Os quatro entregaveis do Raio-X, na ordem do cartao da oferta, com o mesmo
@@ -242,7 +246,13 @@
     { imagem: 'diag-mock-3', titulo: 'Análise estratégica da oferta', texto: 'Entenda por que o cliente pede desconto, e como vender sem baixar o preço, mesmo sendo mais caro que os concorrentes.' },
     { imagem: 'diag-mock-4', titulo: 'Plano de ação aplicável em até 28 dias', texto: 'Saia sabendo o que fazer amanhã cedo, e em que ordem, pra aplicar tudo em até 28 dias.' }
   ];
-  var AVISO_WHATSAPP = 'Olhe o seu WhatsApp, nossa equipe mandou o link para você agendar o seu raio-x.';
+  var AVISO_WHATSAPP = 'Olhe o seu WhatsApp, nossa equipe mandou o link para você agendar o seu ' + semQuebra('raio-x') + '.';
+
+  // Mantem a palavra inteira na mesma linha: sem isso, "raio-x" quebrava no
+  // hifen, com "raio-" numa linha e "x" na outra
+  function semQuebra(texto) {
+    return '<span style="white-space:nowrap">' + texto + '</span>';
+  }
 
   // X discreto no canto das telas do fim, no mesmo desenho do X do formulario
   function htmlFecharCanto() {
@@ -292,11 +302,22 @@
             '<div style="position:absolute; left:50%; bottom:18px; transform:translateX(-50%); width:15px; height:6px; background:var(--ss-cream); border-radius:3px"></div>' +
           '</div>' +
         '</div>' +
-        '<h3 style="' + ESTILO_TITULO_FINAL + '">Recebemos a sua solicitação.</h3>' +
-        '<p style="' + ESTILO_TEXTO_FINAL + '">Em breve a Soulstory entra em contato para confirmar o seu Raio-X de Marca gratuito.</p>' +
+        '<h3 style="' + ESTILO_TITULO_FINAL + '">Falta apenas um passo para o seu ' + semQuebra('raio-x') + ' gratuito.</h3>' +
+        // Barra quase cheia: o que falta e o agendamento pelo WhatsApp. O
+        // vermelho e o mesmo do barril do joguinho (PALETA.r), fechado e de
+        // saturacao contida. O numero vai escrito ao lado, porque a barra
+        // sozinha tem pouco contraste sobre o fundo escuro.
+        '<div style="width:100%; max-width:320px">' +
+          '<div style="margin-bottom:6px; text-align:right; ' + ESTILO_ROTULO_BARRA + '">93% concluído</div>' +
+          '<div role="progressbar" aria-valuenow="93" aria-valuemin="0" aria-valuemax="100" aria-label="Agendamento do raio-x" style="height:9px; border-radius:var(--r-sm); background:rgba(250,248,245,0.14); overflow:hidden">' +
+            '<div style="width:93%; height:100%; border-radius:var(--r-sm); background:' + PALETA.r + '"></div>' +
+          '</div>' +
+        '</div>' +
+        '<p style="' + ESTILO_TEXTO_FINAL + '">A nossa equipe está enviando uma mensagem de WhatsApp com o link para você marcar o ' + semQuebra('raio-x') + ' gratuito.</p>' +
         // Em vez de fechar, o botao principal leva aos entregaveis. Para sair
         // continua havendo o X do canto, a tecla Esc e o clique fora do modal.
         '<button type="button" data-acao="ver-entregaveis" style="' + ESTILO_BOTAO_FINAL + '; margin-top:6px">Veja o que você vai receber gratuitamente</button>' +
+        '<p style="' + ESTILO_NOTA_FINAL + '">Enquanto nosso time envia a mensagem, veja o que você vai receber.</p>' +
         htmlFecharCanto() +
       '</div>';
   }
@@ -393,6 +414,9 @@
     if (!obrigado || el('entregavel-1')) return;
     obrigado.parentNode.insertAdjacentHTML('beforeend', ENTREGAVEIS.map(htmlEntregavel).join(''));
     irParaTela(obrigado, el('entregavel-1'));
+    // O agradecimento sai de cena na hora: ele e a tela mais alta, e os
+    // entregaveis, que dividem a mesma celula da grade, herdariam a altura dele
+    obrigado.style.display = 'none';
   }
 
   function proximoEntregavel(botao) {
