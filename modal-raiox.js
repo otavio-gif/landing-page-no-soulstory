@@ -86,6 +86,8 @@
   var ESTILO_INPUT = 'width:100%; box-sizing:border-box; padding:17px 20px; border-radius:15px; border:1px solid rgba(200,208,255,0.22); background:rgba(255,255,255,0.06); color:var(--ss-cream); color-scheme:dark; font-family:var(--font-sans); font-size:19px; outline:none; transition:border-color .2s ease, box-shadow .2s ease';
   var ESTILO_TEXTAREA = 'width:100%; box-sizing:border-box; padding:17px 20px; min-height:150px; resize:vertical; border-radius:15px; border:1px solid rgba(200,208,255,0.22); background:rgba(255,255,255,0.06); color:var(--ss-cream); color-scheme:dark; font-family:var(--font-sans); font-size:18px; line-height:1.5; outline:none; transition:border-color .2s ease, box-shadow .2s ease';
   var ESTILO_AVANCAR = 'background:var(--ss-periwinkle); color:#0C0B14; box-shadow:0 10px 26px -12px rgba(142,159,238,0.7); border:none; border-radius:13px; padding:15px 32px; font-family:var(--font-sans); font-weight:600; font-size:17px; cursor:pointer; transition:transform .15s ease, box-shadow .2s ease; white-space:nowrap';
+  // Versao compacta do Continuar, para caber ao lado do campo no celular
+  var ESTILO_AVANCAR_CAMPO = 'flex:none; background:var(--ss-periwinkle); color:#0C0B14; box-shadow:0 10px 26px -12px rgba(142,159,238,0.7); border:none; border-radius:13px; padding:0 16px; font-family:var(--font-sans); font-weight:600; font-size:17px; cursor:pointer; transition:transform .15s ease, box-shadow .2s ease; white-space:nowrap';
   var ESTILO_AVANCAR_FINAL = 'background:#E9BE58; color:#0C0B14; box-shadow:0 12px 30px -12px rgba(233,190,88,0.65); border:none; border-radius:13px; padding:15px 32px; font-family:var(--font-sans); font-weight:600; font-size:17px; cursor:pointer; transition:transform .15s ease, box-shadow .2s ease; white-space:nowrap';
 
   // ---------- Avisos de privacidade (LGPD) ----------
@@ -162,9 +164,9 @@
       '<div class="raiox-scroll" style="flex:1; min-height:0; overflow-y:auto; padding:28px 30px 8px">' +
         '<div data-papel="pergunta"></div>' +
       '</div>' +
-      '<div style="display:flex; align-items:center; justify-content:space-between; gap:14px; padding:18px 30px 26px; border-top:1px solid rgba(250,248,245,0.10)">' +
+      '<div data-papel="rodape" style="display:flex; align-items:center; justify-content:space-between; gap:14px; padding:18px 30px 26px; border-top:1px solid rgba(250,248,245,0.10)">' +
         '<button type="button" data-acao="voltar" style="background:none; border:none; color:rgba(250,248,245,0.6); font-family:var(--font-sans); font-size:16px; font-weight:500; cursor:pointer; padding:8px 2px; display:inline-flex; align-items:center; gap:6px; transition:color .2s ease">← Voltar</button>' +
-        '<button type="button" data-acao="avancar" style="' + ESTILO_AVANCAR + '"></button>' +
+        '<button type="button" data-acao="avancar" data-papel="avancar" style="' + ESTILO_AVANCAR + '"></button>' +
       '</div>';
   }
 
@@ -359,15 +361,30 @@
 
     var voltar = el('conteudo').querySelector('[data-acao="voltar"]');
     voltar.style.visibility = estado.passo > 0 ? 'visible' : 'hidden';
-    var avancarBtn = el('conteudo').querySelector('[data-acao="avancar"]');
+    var rotuloAvancar = ultimo ? 'Agendar Raio-X Gratuito' : 'Continuar';
+    var avancarBtn = el('avancar');
     avancarBtn.style.cssText = ultimo ? ESTILO_AVANCAR_FINAL : ESTILO_AVANCAR;
-    avancarBtn.textContent = ultimo ? 'Agendar Raio-X Gratuito' : 'Continuar';
+    avancarBtn.textContent = rotuloAvancar;
+
+    // O responsivo.css usa estas marcas para, no celular, trocar o botao do
+    // rodape pelo botao junto do campo
+    el('conteudo').setAttribute('data-tipo', q.kind);
+    if (estado.passo === 0) el('conteudo').setAttribute('data-primeira', '');
+    else el('conteudo').removeAttribute('data-primeira');
 
     var area = el('pergunta');
     var h = '<h3 style="margin:0 0 10px; font-family:var(--font-sans); font-weight:700; font-size:clamp(25px, 2.7vw, 33px); line-height:1.18; letter-spacing:-0.5px; color:var(--ss-cream); text-wrap:pretty">' + escaparHtml(q.label) + (q.required ? '<span style="color:var(--ss-periwinkle)"> *</span>' : '') + '</h3>';
     if (q.hint) h += '<p style="margin:0 0 24px; font-family:var(--font-serif); font-style:italic; font-size:18.5px; line-height:1.5; color:rgba(250,248,245,0.6)">' + escaparHtml(q.hint) + '</p>';
+    // No celular o teclado cobre o rodape, entao nas perguntas de texto o
+    // Continuar tambem vem ao lado do campo. Ele so aparece no celular
+    // (responsivo.css, secao 7). O campo grande da ultima pergunta nao tem
+    // espaco ao lado, e embaixo dele o botao ficava cortado pela altura do
+    // modal, entao ali o botao segue no rodape.
     if (q.kind === 'text') {
-      h += '<input type="' + q.input + '" value="' + escaparHtml(valor) + '" placeholder="' + escaparHtml(q.placeholder || '') + '" class="raiox-field" data-papel="campo" style="' + ESTILO_INPUT + '">';
+      h += '<div style="display:flex; gap:8px; align-items:stretch">' +
+        '<input type="' + q.input + '" value="' + escaparHtml(valor) + '" placeholder="' + escaparHtml(q.placeholder || '') + '" class="raiox-field" data-papel="campo" style="' + ESTILO_INPUT + '; min-width:0; flex:1 1 auto">' +
+        '<button type="button" data-acao="avancar" class="raiox-avancar-campo" style="' + ESTILO_AVANCAR_CAMPO + '">' + rotuloAvancar + '</button>' +
+      '</div>';
     } else if (q.kind === 'textarea') {
       h += '<textarea placeholder="' + escaparHtml(q.placeholder || '') + '" class="raiox-field" data-papel="campo" style="' + ESTILO_TEXTAREA + '">' + escaparHtml(valor) + '</textarea>';
     } else {
