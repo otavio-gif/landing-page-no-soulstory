@@ -1166,6 +1166,53 @@ select:focus-visible {
     text-align: center;
   }
 }
+
+/* ---------- 7. Raio-X: o Continuar vai para o lado do campo no celular ----------
+   No celular, o teclado virtual cobre a parte de baixo da tela, justamente onde
+   fica o rodapé do modal com o Continuar. Quem estava digitando não via como
+   avançar, e isso custa conversão. Nas perguntas de texto o Continuar passa a
+   ficar ao lado do campo, e o do rodapé sai, para não haver dois iguais na
+   tela. Na primeira pergunta, que não tem Voltar, o rodapé ficaria vazio, então
+   ele sai inteiro, e a área da pergunta recupera o respiro de baixo que o
+   rodapé dava.
+
+   A última pergunta, a do campo grande, fica como estava: não há espaço ao lado
+   do campo, e logo abaixo dele o botão ficava cortado pela altura máxima do
+   modal, pior do que no rodapé, onde ele aparece inteiro.
+
+   O modal-raiox.js já desenha o botão ao lado do campo e marca o tipo da
+   pergunta em data-tipo (e a primeira em data-primeira). No desktop nada muda:
+   o botão do campo fica escondido e o rodapé segue como estava. O !important é
+   necessário onde o valor original está no atributo style. */
+.raiox-avancar-campo {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .raiox-avancar-campo {
+    display: block;
+  }
+
+  [data-modal-raiox] [data-tipo="text"] [data-papel="avancar"] {
+    display: none;
+  }
+
+  /* Com o botão ao lado, o campo fica mais estreito: em 360px o exemplo
+     "voce@empresa.com" perdia a última letra. Menos respiro lateral dentro do
+     campo devolve 12px ao texto. */
+  [data-modal-raiox] [data-tipo="text"] .raiox-field {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+
+  [data-modal-raiox] [data-tipo="text"][data-primeira] [data-papel="rodape"] {
+    display: none !important;
+  }
+
+  [data-modal-raiox] [data-tipo="text"][data-primeira] .raiox-scroll {
+    padding-bottom: 28px !important;
+  }
+}
 </style>
 <!-- estilos-ajustes:fim -->
 </head>
