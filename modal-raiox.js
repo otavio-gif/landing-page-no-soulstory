@@ -100,7 +100,7 @@
   }
 
   // ---------- Estado ----------
-  var estado = { aberto: false, passo: 0, enviado: false, enviando: false, id: '', form: {} };
+  var estado = { aberto: false, passo: 0, enviado: false, id: '', form: {} };
   PERGUNTAS.forEach(function (q) { estado.form[q.key] = ''; });
   var filaParcial = Promise.resolve();  // encadeia os envios parciais, um de cada vez
   var timerAuto = null;       // avanco automatico pendente nas perguntas de escolha
@@ -407,29 +407,27 @@
     });
   }
 
+  // Envio final. O agradecimento aparece na hora do clique, sem esperar o Apps
+  // Script: ele so responde depois de mandar os WhatsApps de aviso, o que leva
+  // de 10 a 15 segundos. O envio segue em segundo plano. Se as duas tentativas
+  // falharem, a linha continua na planilha como parcial, com tudo menos a
+  // ultima resposta.
   function enviar() {
-    if (estado.enviando) return;
+    if (estado.enviado) return;
 
-    var botao = el('conteudo').querySelector('[data-acao="avancar"]');
-    estado.enviando = true;
-    mostrarErro('');
-    if (botao) {
-      botao.disabled = true;
-      botao.textContent = 'Enviando...';
-      botao.style.opacity = '0.65';
-      botao.style.cursor = 'progress';
-    }
+    // O retrato e tirado agora, no clique, para uma nova abertura do modal
+    // durante a segunda tentativa nao mexer no que vai para a planilha.
+    enviarCompleto(JSON.stringify(montarPayload('completo')), 1);
 
-    function liberarBotao() {
-      estado.enviando = false;
-      if (botao) {
-        botao.disabled = false;
-        botao.textContent = 'Agendar Raio-X Gratuito';
-        botao.style.opacity = '';
-        botao.style.cursor = 'pointer';
-      }
-    }
+    // A conversao conta junto com o agradecimento, para quem fecha a aba logo
+    // depois tambem entrar na medicao. Os parciais ficam de fora: sao outra funcao.
+    avisarGtm('raiox_completou', { raiox_id: estado.id });
+    pararJogo();
+    estado.enviado = true;
+    renderizar();
+  }
 
+  function enviarCompleto(corpo, tentativa) {
     // O cabecalho vai como text/plain de proposito: declarar application/json faz
     // o navegador disparar antes uma requisicao de verificacao (preflight CORS),
     // que o Apps Script nao responde. O corpo continua sendo JSON puro, lido do
@@ -437,21 +435,24 @@
     fetch(URL_APPS_SCRIPT, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify(montarPayload('completo')),
-      redirect: 'follow'
+      body: corpo,
+      redirect: 'follow',
+      // keepalive faz o envio sobreviver ao fechamento da aba, que pode vir
+      // logo depois do agradecimento.
+      keepalive: true
     }).then(function (resposta) {
       if (!resposta.ok) throw new Error('HTTP ' + resposta.status);
-      // Depois do throw acima: so chega aqui quando o Apps Script confirmou o
-      // lead. E a mesma linha que libera a tela de agradecimento, entao evento
-      // e tela nunca divergem. Os parciais ficam de fora: sao outra funcao.
-      avisarGtm('raiox_completou', { raiox_id: estado.id });
-      pararJogo();
-      estado.enviando = false;
-      estado.enviado = true;
-      renderizar();
+      return resposta.text();
+    }).then(function (texto) {
+      // Quando o script quebra, o Google devolve uma pagina de erro com status
+      // 200. So o "ok" do proprio script confirma que o lead foi gravado.
+      if (String(texto).trim() !== 'ok') throw new Error('resposta inesperada');
     })['catch'](function () {
-      liberarBotao();
-      mostrarErro('Não foi possível enviar agora. Verifique a sua conexão e tente de novo.');
+      // Uma segunda tentativa, so uma. Se a primeira tiver chegado mesmo assim,
+      // o Apps Script reconhece o id e nao repete os avisos.
+      if (tentativa < 2) {
+        setTimeout(function () { enviarCompleto(corpo, tentativa + 1); }, 2000);
+      }
     });
   }
 
@@ -461,7 +462,6 @@
     estado.aberto = true;
     estado.passo = 0;
     estado.enviado = false;
-    estado.enviando = false;
     estado.id = '';
     filaParcial = Promise.resolve();
     try { document.body.style.overflow = 'hidden'; } catch (e) {}
