@@ -232,7 +232,9 @@
   }
 
   var ESTILO_BOTAO_FINAL = 'max-width:100%; background:var(--ss-periwinkle); color:#0C0B14; border:none; border-radius:12px; padding:15px 32px; font-family:var(--font-sans); font-weight:600; font-size:17px; line-height:1.3; cursor:pointer';
-  var ESTILO_CONTADOR = 'font-family:var(--font-mono); font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ss-periwinkle)';
+  var ESTILO_BOTAO_AGENDAR = 'display:inline-block; max-width:100%; box-sizing:border-box; background:' + PALETA.g + '; color:#0C0B14; text-decoration:none; border-radius:12px; padding:16px 40px; font-family:var(--font-sans); font-weight:700; font-size:18px; line-height:1.3; cursor:pointer; box-shadow:0 0 0 1px rgba(233,190,88,0.5), 0 6px 22px -8px rgba(233,190,88,0.5); transition:transform .16s cubic-bezier(0.22,1,0.36,1), box-shadow .16s cubic-bezier(0.22,1,0.36,1)';
+  var URL_AGENDA = 'https://agenda-raio-x.soulstory.com.br/';
+  var ESTILO_CONTADOR ='font-family:var(--font-mono); font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ss-periwinkle)';
   var ESTILO_TITULO_ENTREGAVEL = 'margin:0; font-family:var(--font-sans); font-weight:700; font-size:26px; line-height:1.2; letter-spacing:-0.4px; color:var(--ss-cream); text-wrap:balance';
   var ESTILO_ROTULO_BARRA = 'font-family:var(--font-mono); font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:rgba(250,248,245,0.6)';
   var ESTILO_NOTA_FINAL = 'margin:0; max-width:440px; font-family:var(--font-sans); font-size:15px; line-height:1.5; color:rgba(250,248,245,0.6); text-wrap:pretty';
@@ -302,22 +304,27 @@
             '<div style="position:absolute; left:50%; bottom:18px; transform:translateX(-50%); width:15px; height:6px; background:var(--ss-cream); border-radius:3px"></div>' +
           '</div>' +
         '</div>' +
-        '<h3 style="' + ESTILO_TITULO_FINAL + '">Falta apenas um passo para o seu ' + semQuebra('raio-x') + ' gratuito.</h3>' +
-        // Barra quase cheia: o que falta e o agendamento pelo WhatsApp. O
-        // vermelho e o mesmo do barril do joguinho (PALETA.r), fechado e de
-        // saturacao contida. O numero vai escrito ao lado, porque a barra
-        // sozinha tem pouco contraste sobre o fundo escuro.
-        '<div style="width:100%; max-width:320px">' +
-          '<div style="margin-bottom:6px; text-align:right; ' + ESTILO_ROTULO_BARRA + '">93% concluído</div>' +
-          '<div role="progressbar" aria-valuenow="93" aria-valuemin="0" aria-valuemax="100" aria-label="Agendamento do raio-x" style="height:9px; border-radius:var(--r-sm); background:rgba(250,248,245,0.14); overflow:hidden">' +
+        '<h3 style="' + ESTILO_TITULO_FINAL + '">Falta apenas um passo para concluir</h3>' +
+        // Barra quase cheia: o que falta e agendar a call. O vermelho e o mesmo
+        // do barril do joguinho (PALETA.r), fechado e de saturacao contida. A
+        // barra e o centro da tela: numero grande em cima e trilho mais grosso,
+        // porque sozinha ela tem pouco contraste sobre o fundo escuro.
+        '<div style="width:100%; max-width:400px; margin:4px 0 2px">' +
+          '<div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:10px">' +
+            '<span style="font-family:var(--font-sans); font-weight:700; font-size:36px; line-height:1; letter-spacing:-0.5px; color:var(--ss-cream)">93%</span>' +
+            '<span style="' + ESTILO_ROTULO_BARRA + '; color:rgba(250,248,245,0.78)">Concluído</span>' +
+          '</div>' +
+          '<div role="progressbar" aria-valuenow="93" aria-valuemin="0" aria-valuemax="100" aria-label="Agendamento do raio-x" style="height:16px; border-radius:var(--r-sm); background:rgba(250,248,245,0.14); box-shadow:inset 0 0 0 1px rgba(250,248,245,0.12); overflow:hidden">' +
             '<div style="width:93%; height:100%; border-radius:var(--r-sm); background:' + PALETA.r + '"></div>' +
           '</div>' +
         '</div>' +
-        '<p style="' + ESTILO_TEXTO_FINAL + '">A nossa equipe está enviando uma mensagem de WhatsApp com o link para você marcar o ' + semQuebra('raio-x') + ' gratuito.</p>' +
-        // Em vez de fechar, o botao principal leva aos entregaveis. Para sair
-        // continua havendo o X do canto, a tecla Esc e o clique fora do modal.
-        '<button type="button" data-acao="ver-entregaveis" style="' + ESTILO_BOTAO_FINAL + '; margin-top:6px">Veja o que você vai receber gratuitamente</button>' +
-        '<p style="' + ESTILO_NOTA_FINAL + '">Enquanto nosso time envia a mensagem, veja o que você vai receber.</p>' +
+        '<p style="' + ESTILO_TEXTO_FINAL + '">Agende a Call de ' + semQuebra('Raio-X') + ' no botão abaixo.</p>' +
+        // O botao leva para a agenda, em outra aba, para o modal continuar aqui.
+        // O dourado (PALETA.g) e o mesmo do botao principal da pagina e fica no
+        // lado oposto do periwinkle no circulo de cores. Para sair do modal
+        // continua havendo o X do canto, a tecla Esc e o clique fora.
+        '<a href="' + URL_AGENDA + '" target="_blank" rel="noopener" style="' + ESTILO_BOTAO_AGENDAR + '; margin-top:6px">Agendar ' + semQuebra('Raio-X') + '</a>' +
+        '<p style="' + ESTILO_NOTA_FINAL + '">O ' + semQuebra('Raio-X') + ' é personalizado para a situação ATUAL do seu negócio, por isso a call é fundamental para o diagnóstico.</p>' +
         htmlFecharCanto() +
       '</div>';
   }
